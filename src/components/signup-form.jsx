@@ -40,7 +40,7 @@ export function SignupForm({ className, ...props }) {
     try {
       const res = await registerUser(values);
       showToast.success("Account created");
-      console.log("User created:", res);
+      // console.log("User created:", res);
 
       setTimeout(() => {
         router.push(ROUTES.AUTH.LOGIN);
@@ -54,8 +54,8 @@ export function SignupForm({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2 items-stretch md:h-[550px]">
+      <Card className="overflow-hidden p-0 ">
+        <div className="grid p-0 md:grid-cols-2 items-stretch md:h-[520px]">
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
@@ -117,9 +117,7 @@ export function SignupForm({ className, ...props }) {
                   {form.formState.errors.password?.message}
                 </p>
 
-                <FieldDescription>
-                  Must be at least 6 characters long.
-                </FieldDescription>
+          
               </Field>
 
               <Field>
@@ -146,7 +144,7 @@ export function SignupForm({ className, ...props }) {
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

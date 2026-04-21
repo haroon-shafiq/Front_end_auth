@@ -5,11 +5,10 @@ import { handleApiError } from "@/utils/api/error-handler";
 export const registerUser = async (data) => {
   try {
     const res = await api.post(API_ROUTES.REGISTER, data);
+    // console.log("Respone in register user",res)
     return res.data;
   } catch (error) {
-    const formattedError = handleApiError(error);
-    console.log("Error", error);
-    throw handleApiError(formattedError);
+    throw error
   }
 };
 
@@ -18,8 +17,6 @@ export const loginUser = async (data) => {
     const res = await api.post(API_ROUTES.LOGIN, data);
     return res.data;
   } catch (error) {
-    const formattedError = handleApiError(error);
-    console.log("Error", error);
-    throw handleApiError(formattedError);
+    throw error
   }
 };

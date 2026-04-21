@@ -4,7 +4,8 @@ import { showToast } from "@/lib/toast"
 
 export const api = axios.create({
   baseURL: "http://localhost:5000",
-  timeout: 10000
+  timeout: 10000,
+  withCredentials: true
 })
 
 api.interceptors.response.use(
@@ -18,12 +19,13 @@ api.interceptors.response.use(
     return Promise.reject(formattedError)
   }
 )
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token")
+// api.interceptors.request.use((config) => {
+//   // const token = localStorage.getItem("token")
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+//   // if (token) {
+//   //   config.headers.Authorization = `Bearer ${token}`
+//   // }
+//   console.log("Config", config)
+//     return config 
 
-  return config
-})
+// }, (error) => Promise.reject(error) )

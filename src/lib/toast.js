@@ -4,6 +4,7 @@ export const showToast = {
   success: (message) => {
     toast.success("", {
       description: message,
+      duration: 1500
     })
   },
 

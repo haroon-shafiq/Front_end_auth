@@ -52,7 +52,7 @@ export const handleApiError = (error) => {
       case 401:
         return {
           status,
-          message: "Unauthorized. Please login again.",
+          message:  message || "Unauthorized. Please login again.",
         }
 
       case 403:
@@ -64,13 +64,13 @@ export const handleApiError = (error) => {
       case 404:
         return {
           status,
-          message: "User not found.",
+          message: message || 'Resource not found',
         }
 
       case 409:
         return {
           status,
-          message: "User already exists",
+          message: message || "User already exists",
         }
 
       case 422:
@@ -82,7 +82,7 @@ export const handleApiError = (error) => {
       case 500:
         return {
           status,
-          message: "Server error. Try again later.",
+          message: message || "Server error. Try again later.",
         }
 
       default:
