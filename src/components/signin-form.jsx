@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validations/login-schema";
 import { ROUTES } from "../constants/routes.js";
-
 import {
   Field,
   FieldDescription,
@@ -17,9 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/services/auth";
 import { showToast } from "@/lib/toast.js";
+import { useRouter } from "next/navigation";
 import Link from "next/link.js";
 
 export function SignInForm({ className, ...props }) {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
@@ -38,6 +39,7 @@ export function SignInForm({ className, ...props }) {
       // console.log("User logged in:", res);
 
       form.reset();
+      router.push(ROUTES.ui.AUTH.DASHBOARD);
     } catch (error) {
       console.log(error);
     }
@@ -107,14 +109,16 @@ export function SignInForm({ className, ...props }) {
               </Field>
 
               <Field>
+
                 <Button type="submit" className="w-full">
                   Sign In
                 </Button>
+
               </Field>
 
               <FieldDescription className="text-center">
                 Don’t have an account?{" "}
-                <Link href={ROUTES.AUTH.REGISTER}>Sign up</Link>
+                <Link href={ROUTES.ui.AUTH.REGISTER}>Sign up</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

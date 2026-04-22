@@ -1,4 +1,4 @@
-export const API_ROUTES = {
-  REGISTER: "/users/register",
-  LOGIN: "/users/login",
-}
+// export const API_ROUTES = {
+//   REGISTER: "/users/register",
+//   LOGIN: "/users/login",
+// }

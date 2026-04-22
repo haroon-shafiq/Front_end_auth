@@ -28,7 +28,7 @@ export const handleApiError = (error) => {
 
   if (error?.response) {
     const status = error.response.status
-    const raw = error.response.data?.message
+    const raw = error.response.data?.message || error.response.data?.errors[0].msg
 
     let message = null
 
@@ -52,7 +52,7 @@ export const handleApiError = (error) => {
       case 401:
         return {
           status,
-          message:  message || "Unauthorized. Please login again.",
+          message: message || "Unauthorized. Please login again.",
         }
 
       case 403:

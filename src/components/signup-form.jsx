@@ -43,10 +43,11 @@ export function SignupForm({ className, ...props }) {
       // console.log("User created:", res);
 
       setTimeout(() => {
-        router.push(ROUTES.AUTH.LOGIN);
+        router.push(ROUTES.ui.AUTH.LOGIN);
       }, 500);
 
       form.reset();
+      setSubmitting(false)
     } catch (error) {
       console.log("Error", error);
     }
@@ -117,7 +118,7 @@ export function SignupForm({ className, ...props }) {
                   {form.formState.errors.password?.message}
                 </p>
 
-          
+
               </Field>
 
               <Field>
@@ -132,7 +133,7 @@ export function SignupForm({ className, ...props }) {
 
               <FieldDescription className="text-center">
                 Already have an account?{" "}
-                <Link href={ROUTES.AUTH.LOGIN}>Login</Link>
+                <Link href={ROUTES.ui.AUTH.LOGIN}>Login</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

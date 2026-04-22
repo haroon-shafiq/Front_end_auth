@@ -1,11 +1,10 @@
 import { api } from "@/lib/axios";
-import { API_ROUTES } from "@/constants/api-routes";
-import { handleApiError } from "@/utils/api/error-handler";
+import { ROUTES } from "../constants/routes.js"
+
 
 export const registerUser = async (data) => {
   try {
-    const res = await api.post(API_ROUTES.REGISTER, data);
-    // console.log("Respone in register user",res)
+    const res = await api.post(ROUTES.API_ROUTES.REGISTER, data);
     return res.data;
   } catch (error) {
     throw error
@@ -14,9 +13,17 @@ export const registerUser = async (data) => {
 
 export const loginUser = async (data) => {
   try {
-    const res = await api.post(API_ROUTES.LOGIN, data);
+    const res = await api.post(ROUTES.API_ROUTES.LOGIN, data);
     return res.data;
   } catch (error) {
     throw error
   }
 };
+export const Logout = async () => {
+  try {
+    const res = await api.post(ROUTES.API_ROUTES.LOGOUT);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}

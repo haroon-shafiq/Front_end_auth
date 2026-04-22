@@ -1,9 +1,10 @@
 import axios from "axios"
 import { handleApiError } from "@/utils/api/error-handler"
 import { showToast } from "@/lib/toast"
+import { env } from "@/config/env"
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: env.apiUrl,
   timeout: 10000,
   withCredentials: true
 })
@@ -14,9 +15,13 @@ api.interceptors.response.use(
   },
   (error) => {
     const formattedError = handleApiError(error)
-    showToast.error(formattedError.message)
+    if (error) {
 
-    return Promise.reject(formattedError)
+      console.log("Error in ", formattedError.message)
+      showToast.error(formattedError.message)
+    }
+
+    return Promise.reject(error)
   }
 )
 // api.interceptors.request.use((config) => {
