@@ -8,10 +8,7 @@ const authRoutes = [
 export function proxy(req) {
 
     const token = req.cookies.get("token");
-    console.log("Token", token?.value);
     const path = req.nextUrl.pathname;
-    console.log("Path", path);
-
     const isAuthRoute = authRoutes.includes(path);
     const isProtectedRoute = path.startsWith("/dashboard");
 

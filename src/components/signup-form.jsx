@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/lib/validations/register-schema";
@@ -31,23 +31,23 @@ export function SignupForm({ className, ...props }) {
     defaultValues: {
       name: "",
       email: "",
+      role: "",
       password: "",
     },
   });
 
   async function onSubmit(values) {
+    console.log("VALUES", values)
     setSubmitting(true);
     try {
       const res = await registerUser(values);
       showToast.success("Account created");
       // console.log("User created:", res);
 
-      setTimeout(() => {
-        router.push(ROUTES.ui.AUTH.LOGIN);
-      }, 500);
-
+      
+      router.push(ROUTES.ui.AUTH.LOGIN);
       form.reset();
-      setSubmitting(false)
+      setSubmitting(false);
     } catch (error) {
       console.log("Error", error);
     }
@@ -56,7 +56,7 @@ export function SignupForm({ className, ...props }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 ">
-        <div className="grid p-0 md:grid-cols-2 items-stretch md:h-[520px]">
+        <div className="grid p-0 md:grid-cols-2 items-stretch md:h-[590px]">
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
@@ -101,6 +101,34 @@ export function SignupForm({ className, ...props }) {
                   {form.formState.errors.email?.message}
                 </p>
               </Field>
+              <Field>
+                <FieldLabel>Role</FieldLabel>
+
+                <div className="flex  space-x-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="MANAGER"
+                      {...form.register("role")}
+                    />
+                    <span>MANAGER</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="DEVELOPER"
+                      {...form.register("role")}
+                    />
+                    <span>DEVELOPER</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input type="radio" value="QA" {...form.register("role")} />
+                    <span>QA</span>
+                  </label>
+                </div>
+              </Field>
 
               <Field>
                 <FieldLabel>Password</FieldLabel>
@@ -117,8 +145,6 @@ export function SignupForm({ className, ...props }) {
                 <p className="text-sm text-red-500 ">
                   {form.formState.errors.password?.message}
                 </p>
-
-
               </Field>
 
               <Field>

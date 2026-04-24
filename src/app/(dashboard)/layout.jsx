@@ -1,18 +1,14 @@
-import Sidebar from "@/components/sidebar";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 export const metadata = {
     title: "Dashboard",
     description: "This is dashboard",
 };
 
-export default function DashboardLayout({ children }) {
+export default function Layout({ children }) {
     return (
-        <div className="flex">
-            <Sidebar />
-            <div className="flex-1">
-                {children}
-            </div>
-        </div>
-
+        <DashboardLayout>
+            {children}
+        </DashboardLayout> 
     );
 }

@@ -8,6 +8,9 @@ export const registerSchema = z.object({
   email: z
     .string()
     .email("Please enter a valid email like example@gmail.com"),
+  role: z.enum(["MANAGER", "DEVELOPER", "QA"], {
+    errorMap: () => ({ message: "Please select a role" }),
+  }),  
 
   password: z
     .string()

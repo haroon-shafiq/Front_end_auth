@@ -28,7 +28,7 @@ export const handleApiError = (error) => {
 
   if (error?.response) {
     const status = error.response.status
-    const raw = error.response.data?.message || error.response.data?.errors[0].msg
+    const raw = error.response.data?.message || error.response.data?.errors?.[0]?.msg
 
     let message = null
 

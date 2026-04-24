@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validations/login-schema";
 import { ROUTES } from "../constants/routes.js";
+import { AuthContext } from "@/contexts/AuthContext.jsx";
+import { useContext } from "react";
 import {
   Field,
   FieldDescription,
@@ -21,6 +23,8 @@ import Link from "next/link.js";
 
 export function SignInForm({ className, ...props }) {
   const router = useRouter();
+  // const { setUser } = useContext(AuthContext);
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
@@ -31,13 +35,12 @@ export function SignInForm({ className, ...props }) {
   });
 
   async function onSubmit(values) {
+    console.log("Form values", values);
     try {
       const res = await loginUser(values);
-      // localStorage.setItem("token", res.data);
-      showToast.success("Login successful ");
-
-      // console.log("User logged in:", res);
-
+      console.log("Login response", res.user.role);
+      // setUser(res.user.role);
+      showToast.success("Login successful ");      
       form.reset();
       router.push(ROUTES.ui.AUTH.DASHBOARD);
     } catch (error) {

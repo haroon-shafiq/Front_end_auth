@@ -10,9 +10,10 @@ export const ROUTES = {
     DASHBOARD: "/dashboard"
   },
   API_ROUTES: {
-    REGISTER: "/users/register",
-    LOGIN: "/users/login",
-    LOGOUT: "/users/logout"
+    REGISTER: "/api/v1/auth/register",  
+    LOGIN: "/api/v1/auth/login", 
+    LOGOUT: "/api/v1/auth/logout", 
+    GETUSER: "/api/v1/auth/me"
   },
   SIDEBAR: [
     { href: "/dashboard", label: "Dashboard" },
