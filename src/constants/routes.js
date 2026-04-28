@@ -13,7 +13,14 @@ export const ROUTES = {
     REGISTER: "/api/v1/auth/register",  
     LOGIN: "/api/v1/auth/login", 
     LOGOUT: "/api/v1/auth/logout", 
-    GETUSER: "/api/v1/auth/me"
+    GETUSER: "/api/v1/auth/me",
+    GETALLDEVS: "/api/v1/auth/developers",
+    CREATEPROJECT: "/api/v2/projects/create",
+    GETPROJECT: "/api/v2/projects/",
+    CREATEBUG: (projectID) => `/api/v3/bugs/${projectID}/create`,
+    GETPROJECTS: "/api/v2/projects/getAllProjects",
+    ALLBUGS: "/api/v3/bugs/all-bugs",
+    DEVSBYPROJECT: (projectId) => `/api/v1/auth/developers/${projectId}`
   },
   SIDEBAR: [
     { href: "/dashboard", label: "Dashboard" },

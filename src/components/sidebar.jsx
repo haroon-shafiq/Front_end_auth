@@ -17,7 +17,12 @@ const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useContext(AuthContext);
+  const { user, isLoading } = useContext(AuthContext);
+  console.log("User", user)
+    
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
   const sidebarData = sidebarConfig[user?.role] || [];
   console.log("Sidebar dara", sidebarData);
 
@@ -61,12 +66,11 @@ const Sidebar = () => {
               </Link>
             ))}
           </div>
-          <div className="hover:bg-sidebar-text/10 p-2 rounded-md cursor-pointer">
-            <button onClick={handleLogout} className="cursor-pointer ">
-              {" "}
+
+            <button onClick={handleLogout} className="hover:bg-sidebar-text/10 flex justify-start p-2 rounded-md  cursor-pointer ">
               Logout
             </button>
-          </div>
+
         </div>
       </nav>
     </aside>

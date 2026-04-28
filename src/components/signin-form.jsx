@@ -23,7 +23,7 @@ import Link from "next/link.js";
 
 export function SignInForm({ className, ...props }) {
   const router = useRouter();
-  // const { setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -35,11 +35,10 @@ export function SignInForm({ className, ...props }) {
   });
 
   async function onSubmit(values) {
-    console.log("Form values", values);
     try {
       const res = await loginUser(values);
       console.log("Login response", res.user.role);
-      // setUser(res.user.role);
+      setUser(res.user);
       showToast.success("Login successful ");      
       form.reset();
       router.push(ROUTES.ui.AUTH.DASHBOARD);

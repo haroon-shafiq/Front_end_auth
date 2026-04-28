@@ -2,7 +2,6 @@ export const sidebarConfig = {
   MANAGER: [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Projects", path: "/projects" },
-    { label: "Assign Tasks", path: "/tasks/assign" },
   ],
 
   DEVELOPER: [
@@ -13,7 +12,6 @@ export const sidebarConfig = {
 
   QA: [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Bug Reports", path: "/bugs" },
-    { label: "Projects", path: "/projects" },
+    { label: "Bugs", path: "/bugs" },
   ],
 };
