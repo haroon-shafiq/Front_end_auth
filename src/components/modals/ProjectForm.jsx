@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getDevelopers, createProject } from "@/services/projects";
+import { Button } from "../ui/button";
 
 const AddProjectModal = ({ isOpen, onClose }) => {
   const [form, setForm] = useState({
@@ -119,15 +120,15 @@ const AddProjectModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <button onClick={onClose} className="border px-3 py-1 rounded">
+          <Button onClick={onClose} className="border px-3 py-1 rounded">
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSubmit}
             className="bg-black text-white px-3 py-1 rounded"
           >
             Create
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -3,7 +3,11 @@ import { ROUTES } from "../constants/routes";
 
 export const createBug = async (data) => {
     try {
-        const res = await api.post(ROUTES.API_ROUTES.CREATEBUG(data.project), data);
+        const res = await api.post(ROUTES.API_ROUTES.CREATEBUG(data.project), data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         console.log("Create bug response", res.data);
         return res.data;
     }
@@ -29,3 +33,23 @@ export const getDevelopersByProject = async (projectId) => {
       throw error;
     }
   };
+  export const UploadImage = async (bugID, formData) => {
+  try {
+    const res = await api.patch(
+      ROUTES.API_ROUTES.UPLOAD_IMAGE(bugID),
+      formData
+    );
+
+    return res.data.url;
+  } catch (error) {
+    throw error;
+  }
+};
+export const GetBugByID = async (bugID) => {
+    try{
+        const res = await api.get(ROUTES.API_ROUTES.GETBUGBYID(bugID));
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+}

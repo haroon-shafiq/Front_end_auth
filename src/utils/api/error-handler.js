@@ -52,7 +52,7 @@ export const handleApiError = (error) => {
       case 401:
         return {
           status,
-          message: message || "Unauthorized. Please login again.",
+          message: message || "Unauthorized. Please login.",
         }
 
       case 403:

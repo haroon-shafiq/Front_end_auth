@@ -41,3 +41,12 @@ export const getALLProjects = async () => {
         throw error;
     }
 }
+export const getProjectsByDeveloper = async () => {
+  try {
+    const res = await api.get(ROUTES.API_ROUTES.PROJECTIDBYDEV);
+    console.log("Get projects by developer response", res.data);
+    return res.data.projectIds || [];
+  } catch (error) {
+    throw error;
+  }
+};

@@ -20,7 +20,10 @@ export const ROUTES = {
     CREATEBUG: (projectID) => `/api/v3/bugs/${projectID}/create`,
     GETPROJECTS: "/api/v2/projects/getAllProjects",
     ALLBUGS: "/api/v3/bugs/all-bugs",
-    DEVSBYPROJECT: (projectId) => `/api/v1/auth/developers/${projectId}`
+    GETBUGBYID: (bugID) => `/api/v3/bugs/${bugID}`,
+    DEVSBYPROJECT: (projectId) => `/api/v1/auth/developers/${projectId}`,
+    PROJECTIDBYDEV: "/api/v2/projects/my-projects",
+    UPLOAD_IMAGE: (bugID) => `/api/v4/upload/${bugID}`
   },
   SIDEBAR: [
     { href: "/dashboard", label: "Dashboard" },
