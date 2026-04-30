@@ -2,120 +2,165 @@
 
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell
+} from "../ui/table";
 import { getProjectsByDeveloper } from "@/services/projects";
-import { DeveloperTable } from "@/constants/table";
 import { GetBugByID } from "@/services/bugs";
 import { Button } from "../ui/button";
 import { BugDetailModal } from "../modals/BugDetailModal";
+import { DeveloperTable } from "@/constants/table";
 
 const TaskDetails = () => {
   const { user } = useContext(AuthContext);
+
   const [projects, setProjects] = useState([]);
-  const [selectedBug, setSelectedBug] = useState(null); 
+  const [selectedBug, setSelectedBug] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
     if (!user?.id) return;
+
     const fetchProjects = async () => {
       try {
         const data = await getProjectsByDeveloper();
-        console.log("Fetch projects response", data);
         setProjects(data || []);
       } catch (error) {
         console.error("Error fetching projects", error);
       }
     };
+
     fetchProjects();
   }, [user?.id]);
 
-  const getManagerName = (project) => {
-    return project.manager?.name || "Not assigned";
-  };
+  const allBugs = [];
 
-  const getQaBugs = (project) => {
-    const bugs = project.bugs || [];
-    return bugs.filter((bug) => (
-      bug.assignedBy?.role === "QA" ||
-      bug.assignedTo?.role === "QA"
-    ));
-  };
+  projects.forEach(project => {
+  const bugs = project.bugs || [];
 
-  const HandleView = async (bugID) => {
-    console.log("Bug id in task", bugID)
-    const res = await GetBugByID(bugID);
-    console.log("Fetched bug details", res);
-    if (res.success == true) {
-      setSelectedBug(res.bug);
+  bugs.forEach(bug => {
+     if (bug.assignedBy?.role === "QA") {
+      allBugs.push(bug);
     }
+  });
+});
+
+  const filteredBugs = allBugs.filter((bug) => {
+    if(statusFilter === "ALL" || bug.status === statusFilter){
+      return statusFilter
+    };
+  });
+
+  const handleView = async (bugID) => {
+    const res = await GetBugByID(bugID);
+    if (res.success) setSelectedBug(res.bug);
   };
 
   return (
     <div className="w-full">
       <div className="max-w-[1040px] mx-auto">
+
+      
         <div className="flex justify-between items-center mt-10">
-          <h1 className="text-xl font-semibold">Welcome {user?.name}</h1>
-          <p className="text-sm text-gray-500">Developer Dashboard</p>
+          <h1 className="text-xl font-semibold">
+            Welcome {user?.name}
+          </h1>
+          <p className="text-sm text-gray-500">
+            Developer Dashboard
+          </p>
         </div>
 
-        <div className="mt-10 border rounded">
+    
+        <div className="flex justify-end mt-10 space-x-2">
+          <span>Status:</span>
+          <select
+            className="border px-2 py-1 rounded"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="ALL">All</option>
+            <option value="NEW">New</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+
+      
+        <div className="mt-10 border rounded overflow-hidden">
           <Table>
+
             <TableHeader>
               <TableRow>
-                {DeveloperTable.map((dev) => (
-                  <TableHead key={dev.id}>{dev.label}</TableHead>
+                {DeveloperTable.slice(3).map((col) => (
+                  <TableHead key={col.id}>
+                    {col.label}
+                  </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {projects.map((project) => {
-                const qaBugs = getQaBugs(project);
+              {filteredBugs.length > 0 ? (
+                filteredBugs.map((bug) => (
+                  <TableRow key={bug.id}>
 
-                return (
-                  <TableRow key={project.id}>
-                    <TableCell>{project.name}</TableCell>
-                    <TableCell>{project.description || "No description available"}</TableCell>
-                    <TableCell>{getManagerName(project)}</TableCell>
-                    <TableCell>
-                      {qaBugs.length > 0
-                        ? qaBugs.map((bug) => bug.title).join(", ")
-                        : "No QA bugs"}
-                    </TableCell>
-                    <TableCell>
-                      {qaBugs.length > 0
-                        ? qaBugs.map((bug) => bug.status).join(", ")
-                        : "No QA bugs"}
-                    </TableCell>
-                    <TableCell>
-                      {qaBugs.length > 0
-                        ? qaBugs.map((bug) => (
-                            new Date(bug.deadline).toLocaleDateString("en-CA")
-                          )).join(", ")
-                        : "No deadline set"}
+                    <TableCell>{bug.title}</TableCell>
 
-
-                      {qaBugs.map((bug) => (
-                        <Button
-                          key={bug.id}
-                          onClick={() => HandleView(bug.id)}
-                          className="ml-2"
-                        >
-                          View
-                        </Button>
-                      ))}
+                    <TableCell>
+                      <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          bug.status === "NEW"
+                            ? "bg-green-100 text-green-700"
+                            : bug.status === "RESOLVED"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {bug.status}
+                      </span>
                     </TableCell>
+
+                    <TableCell>
+                      {bug.deadline
+                        ? new Date(bug.deadline).toLocaleDateString("en-CA")
+                        : "No deadline"}
+                    </TableCell>
+
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        onClick={() => handleView(bug.id)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+
                   </TableRow>
-                );
-              })}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-5">
+                    No bugs found
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
+
           </Table>
         </div>
 
-
+  
         <BugDetailModal
           bug={selectedBug}
           onClose={() => setSelectedBug(null)}
+          projects={projects}
         />
+
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react'
-import TaskDetails from '@/components/tasks/taskDetails'
+import TaskDetails from '@/components/tasks/TaskDetails'
 const page = () => {
   return (
     <div>

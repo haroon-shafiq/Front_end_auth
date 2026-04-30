@@ -15,6 +15,24 @@ export const createBug = async (data) => {
         throw error;
     }
 }
+export const updateBug = async(bugID, data) => {
+    try{
+        const res = await api.patch(
+          ROUTES.API_ROUTES.UPDATEBUGBYID(bugID), 
+          {
+            title: data.title,
+            deadline: data.deadline,
+            description: data.description,
+            type: data.type,
+            status: data.status,
+          }
+        );
+        console.log("Updated Bug", res.data);
+        return res.data;
+    }catch(error){
+        throw error
+    }
+}
 export const getAllBugs = async () => {
     try {
         const res = await api.get(ROUTES.API_ROUTES.ALLBUGS);

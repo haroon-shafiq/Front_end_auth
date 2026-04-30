@@ -9,6 +9,7 @@ const managerTableHead = [
     id: 4,
     label: "Assigned Developer",
   },
+  {id:5, label: "Email"}
 ];
 const bugTableHead = [
   { id: 1, label: "Name" },
@@ -32,11 +33,12 @@ const BugStatus = [
     { id: 4, label: "COMPLETED" },
 ];
 const DeveloperTable = [
-    { id: 1, label: "Project Name" },
+    { id: 1, label: "Project" },
     { id: 2, label: "Description" },
-    { id: 3, label: "Manager Assigned" },
-    { id: 4, label: "QA Bugs" },
-    {id: 5, label: "Bug Status"},
-    {id: 6, label: "Bug deadline"}
+    { id: 3, label: "Manager " },
+    { id: 4, label: "Bug Title" },
+    {id: 5, label: "Status"},
+    {id: 6, label: "deadline"},
+    {id: 7, label: "Action"}
 ]
 export { managerTableHead, bugTableHead, BugType, BugStatus, DeveloperTable };

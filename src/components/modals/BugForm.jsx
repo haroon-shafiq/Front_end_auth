@@ -15,7 +15,9 @@ const initialForm = {
   developerIDs: [],
 };
 
-const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
+const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
+  console.log("Edit========================",isEdit)
+  console.log("Open========================",isOpen)
   const [form, setForm] = useState(initialForm);
   const [developers, setDevelopers] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -53,6 +55,27 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
     if (!isOpen) return;
     fetchProjects();
   }, [isOpen]);
+
+  useEffect(() => {
+  if (isEdit && bugData) {
+    setForm({
+      title: bugData.title || "",
+      description: bugData.description || "",
+      deadline: bugData.deadline ? bugData.deadline.split("T")[0] : "",
+      type: bugData.type || "",
+      image: "",
+      status: bugData.status || "",
+      project: bugData.project?.id || "",
+      developerIDs: bugData.assignedTo?.id ? [bugData.assignedTo.id] : [],
+    });
+
+    if (bugData.project?.id) {
+      fetchDevelopersByProject(bugData.project.id);
+    }
+  } else {
+    setForm(initialForm);
+  }
+}, [isEdit, bugData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,9 +138,11 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-white w-[450px] p-5 rounded shadow">
-        <h2 className="text-lg font-semibold mb-4">Create Bug</h2>
+        
+        <h2 className="text-lg font-semibold mb-4">{isEdit ? "Edit Bug" : "Create Bug"}</h2>
 
         <div className="space-y-3">
+          
           <input
             name="title"
             placeholder="Bug Title"
@@ -141,12 +166,15 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
             onChange={handleChange}
             className="w-full border p-2 rounded"
           />
-          <input
-            type="file"
-            accept="image/png, image/gif"
-            className="w-full border p-2 rounded"
-            onChange={handleUpload}
-          />
+          {!isEdit && (
+  <input
+    type="file"
+    accept="image/png, image/gif"
+    className="w-full border p-2 rounded"
+    onChange={handleUpload}
+  />
+)}
+
           <select
             name="type"
             value={form.type}
@@ -174,21 +202,15 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
               </option>
             ))}
           </select>
-
-          <select
-            name="project"
-            value={form.project}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="">Select Project</option>
-            {projects.map((proj) => (
-              <option key={proj.id} value={proj.id}>
-                {proj.name}
-              </option>
-            ))}
-          </select>
-
+       {!isEdit && (
+  <select name="project" value={form.project} onChange={handleChange} className="w-full border p-2 rounded">
+    <option value="">Select Project</option>
+    {projects.map((proj) => (
+      <option key={proj.id} value={proj.id}>{proj.name}</option>
+    ))}
+  </select>
+)}
+{!isEdit && (
           <div className="border p-2 rounded max-h-[150px] overflow-y-auto">
             <p className="text-sm font-medium mb-2">Select Developers</p>
 
@@ -213,7 +235,9 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
               ))
             )}
           </div>
+               )}
         </div>
+     
 
         <div className="flex justify-end gap-2 mt-4">
           <Button
@@ -226,19 +250,13 @@ const BugForm = ({ isOpen, onClose, onSubmit, isView }) => {
             Cancel
           </Button>
 
-          <Button
-            onClick={() => {
-              onSubmit({
-                ...form,
-                image: file,
-              });
-              resetForm();
-              onClose();
-            }}
-            className="bg-black text-white px-3 py-1 rounded"
-          >
-            Create
-          </Button>
+<Button onClick={() => {
+  onSubmit({ ...form, image: file });
+  resetForm();
+  onClose();
+}}>
+  {isEdit ? "Update" : "Create"}
+</Button>
         </div>
       </div>
     </div>

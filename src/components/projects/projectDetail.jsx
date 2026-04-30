@@ -77,6 +77,13 @@ const ProjectDetail = () => {
                           .join(", ")
                       : "Unassigned"}
                   </TableCell>
+                                    <TableCell>
+                    {project.projectUsers?.length > 0
+                      ? project.projectUsers
+                          .map((pu) => pu.user.email)
+                          .join(", ")
+                      : "Unassigned"}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

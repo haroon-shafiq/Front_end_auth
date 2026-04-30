@@ -7,6 +7,7 @@ export const sidebarConfig = {
   DEVELOPER: [
     { label: "Dashboard", path: "/dashboard" },
     { label: "My Tasks", path: "/tasks" },
+    {label: "Project List", path: "/projectList"}
 
   ],
 
