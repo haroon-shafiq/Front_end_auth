@@ -7,8 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validations/login-schema";
 import { ROUTES } from "../constants/routes.js";
-import { AuthContext } from "@/contexts/AuthContext.jsx";
-import { useContext } from "react";
+
 import {
   Field,
   FieldDescription,
@@ -18,12 +17,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/services/auth";
 import { showToast } from "@/lib/toast.js";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link.js";
+
 
 export function SignInForm({ className, ...props }) {
   const router = useRouter();
-  const { setUser } = useContext(AuthContext);
+
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -33,19 +35,29 @@ export function SignInForm({ className, ...props }) {
       password: "",
     },
   });
-
   async function onSubmit(values) {
-    try {
-      const res = await loginUser(values);
-      console.log("Login response", res.user.role);
-      setUser(res.user);
-      showToast.success("Login successful ");      
-      form.reset();
-      router.push(ROUTES.ui.AUTH.DASHBOARD);
-    } catch (error) {
-      console.log(error);
+  try {
+    const res = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,   
+    });
+
+    if (res?.error) {
+      showToast.error("Invalid email or password");
+      return;
     }
+    console.log("Response:", res);
+
+    showToast.success("Login successful");
+    form.reset();
+    router.push(ROUTES.ui.AUTH.DASHBOARD);
+
+  } catch (error) {
+    console.log(error);
+    showToast.error("Something went wrong");
   }
+}
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

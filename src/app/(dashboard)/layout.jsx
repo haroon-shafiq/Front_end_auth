@@ -5,7 +5,7 @@ export const metadata = {
     description: "This is dashboard",
 };
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
     return (
         <DashboardLayout>
             {children}

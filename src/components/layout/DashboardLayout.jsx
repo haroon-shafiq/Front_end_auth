@@ -6,20 +6,22 @@ import { AuthContext } from "@/contexts/AuthContext";
 
 const DashboardLayout = ({ children }) => {
 console.log("this is dashlayout")
-const {setUser} = useContext(AuthContext)
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await Getuser();
-                setUser(res.data);
-            } catch (error) {
-                console.error("Error fetching user", error);
-                setUser(null);
-            }
-        };
+// const {setUser} = useContext(AuthContext)
+//     useEffect(() => {
+//         const fetchUser = async () => {
+//             try {
+//                 const res = await Getuser();
+//                 console.log("Response in the dashboard layout", res)
+//                 setUser(res.data);
+//             } catch (error) {
+//                 console.error("Error fetching user", error);
+                
+//                 setUser(null);
+//             }
+//         };
 
-        fetchUser();
-    }, []);
+//         fetchUser();
+//     }, []);
   return (
     <div className="flex">
       <Sidebar />

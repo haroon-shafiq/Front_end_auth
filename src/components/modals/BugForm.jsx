@@ -99,6 +99,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
+    console.log("File get", file)
     if (!file) return;
 
     const allowedTypes = ["image/png", "image/gif"];
@@ -138,11 +139,11 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-white w-[450px] p-5 rounded shadow">
-        
-        <h2 className="text-lg font-semibold mb-4">{isEdit ? "Edit Bug" : "Create Bug"}</h2>
+        <h2 className="text-lg font-semibold mb-4">
+          {isEdit ? "Edit Bug" : "Create Bug"}
+        </h2>
 
         <div className="space-y-3">
-          
           <input
             name="title"
             placeholder="Bug Title"
@@ -167,13 +168,13 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
             className="w-full border p-2 rounded"
           />
           {!isEdit && (
-  <input
-    type="file"
-    accept="image/png, image/gif"
-    className="w-full border p-2 rounded"
-    onChange={handleUpload}
-  />
-)}
+            <input
+              type="file"
+              accept="image/png, image/gif"
+              className="w-full border p-2 rounded"
+              onChange={handleUpload}
+            />
+          )}
 
           <select
             name="type"
@@ -202,42 +203,48 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
               </option>
             ))}
           </select>
-       {!isEdit && (
-  <select name="project" value={form.project} onChange={handleChange} className="w-full border p-2 rounded">
-    <option value="">Select Project</option>
-    {projects.map((proj) => (
-      <option key={proj.id} value={proj.id}>{proj.name}</option>
-    ))}
-  </select>
-)}
-{!isEdit && (
-          <div className="border p-2 rounded max-h-[150px] overflow-y-auto">
-            <p className="text-sm font-medium mb-2">Select Developers</p>
+          {!isEdit && (
+            <select
+              name="project"
+              value={form.project}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+            >
+              <option value="">Select Project</option>
+              {projects.map((proj) => (
+                <option key={proj.id} value={proj.id}>
+                  {proj.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {!isEdit && (
+            <div className="border p-2 rounded max-h-[150px] overflow-y-auto">
+              <p className="text-sm font-medium mb-2">Select Developers</p>
 
-            {!form.project ? (
-              <p className="text-sm text-gray-500">Select a project first</p>
-            ) : loadingDevs ? (
-              <p>Loading...</p>
-            ) : (
-              developers.map((dev) => (
-                <label key={dev.user.id} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={form.developerIDs.includes(dev.user.id)}
-                    disabled={
-                      form.developerIDs.length > 0 &&
-                      !form.developerIDs.includes(dev.user.id)
-                    }
-                    onChange={() => handleCheckbox(dev.user.id)}
-                  />
-                  {dev.user.name}
-                </label>
-              ))
-            )}
-          </div>
-               )}
+              {!form.project ? (
+                <p className="text-sm text-gray-500">Select a project first</p>
+              ) : loadingDevs ? (
+                <p>Loading...</p>
+              ) : (
+                developers.map((dev) => (
+                  <label key={dev.user.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={form.developerIDs.includes(dev.user.id)}
+                      disabled={
+                        form.developerIDs.length > 0 &&
+                        !form.developerIDs.includes(dev.user.id)
+                      }
+                      onChange={() => handleCheckbox(dev.user.id)}
+                    />
+                    {dev.user.name}
+                  </label>
+                ))
+              )}
+            </div>
+          )}
         </div>
-     
 
         <div className="flex justify-end gap-2 mt-4">
           <Button
@@ -250,13 +257,15 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
             Cancel
           </Button>
 
-<Button onClick={() => {
-  onSubmit({ ...form, image: file });
-  resetForm();
-  onClose();
-}}>
-  {isEdit ? "Update" : "Create"}
-</Button>
+          <Button
+            onClick={() => {
+              onSubmit({ ...form, image: file });
+              resetForm();
+              onClose();
+            }}
+          >
+            {isEdit ? "Update" : "Create"}
+          </Button>
         </div>
       </div>
     </div>

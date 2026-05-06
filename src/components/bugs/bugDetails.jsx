@@ -1,6 +1,6 @@
 'use client';
 import { AuthContext } from "@/contexts/AuthContext";
-import { useContext, useEffect } from "react";
+import { useEffect,useContext } from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../ui/table";
@@ -13,9 +13,10 @@ import { CircleLoader } from "react-spinners";
 import { updateBug } from "@/services/bugs";
 
 
+
 export const BugDetails = () => {
 
-  const {user} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);  
   const [open, setOpen] = useState(false);
 
 
@@ -23,7 +24,7 @@ export const BugDetails = () => {
   const [selectedBug, setSelectedBug] = useState(null);
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [editBug, setEditBug] = useState(null);            // for Edit modal — ADD THIS
+  const [editBug, setEditBug] = useState(null);           
 
   // const [selectBugUpdate, setSelectBugUpdate] = useState(null);
 
@@ -60,7 +61,7 @@ export const BugDetails = () => {
   };
 
 const handleUpdate = async (data) => {
-    console.log("Data being sent:", data); // ← add this
+    console.log("Data being sent:", data);
 
     console.log("editBug:", editBug);       
   console.log("editBug.id:", editBug?.id); 
@@ -71,7 +72,7 @@ const handleUpdate = async (data) => {
       fetchData();
       setOpen(false);
       setEdit(false);
-        setEditBug(null);   
+      setEditBug(null);   
     }
   } catch (err) {
     console.error("Update bug error", err);
@@ -116,7 +117,6 @@ const handleUpdate = async (data) => {
             >
               Create Bug
             </Button>
-
           </div>
         </div>
         <div className="mt-10 border rounded">
@@ -144,14 +144,23 @@ const handleUpdate = async (data) => {
                   <TableCell>{bug.assignedTo?.name}</TableCell>
                   <TableCell>
                     <div className="space-x-3">
-                    <Button onClick={() =>{ 
-                      HandleView(bug.id); 
-                      setEdit(false)}}>View</Button>
-                    <Button onClick={() => {
-  setEdit(true);
-  setOpen(true);         
-  setEditBug(bug);  
-}}>Edit</Button>
+                      <Button
+                        onClick={() => {
+                          HandleView(bug.id);
+                          setEdit(false);
+                        }}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEdit(true);
+                          setOpen(true);
+                          setEditBug(bug);
+                        }}
+                      >
+                        Edit
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -161,13 +170,16 @@ const handleUpdate = async (data) => {
         </div>
 
         <BugFormModal
-  isOpen={open}
-  onClose={() => { setOpen(false); setEdit(false); setSelectedBug(null); }}
-  onSubmit={edit ? handleUpdate : handleSubmit}
-  isEdit={edit}
-  bugData={editBug}     
-
-/>
+          isOpen={open}
+          onClose={() => {
+            setOpen(false);
+            setEdit(false);
+            setSelectedBug(null);
+          }}
+          onSubmit={edit ? handleUpdate : handleSubmit}
+          isEdit={edit}
+          bugData={editBug}
+        />
         <BugDetailModal
           bug={selectedBug}
           onClose={() => setSelectedBug(null)}

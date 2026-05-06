@@ -1,4 +1,4 @@
-import DashboardDetails from "@/components/dashboard/dashboardDetails";
+import DashboardDetails from "@/components/dashboard/DashboardDetails";
 
 export default function Dashboard() {
     return (

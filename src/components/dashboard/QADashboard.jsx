@@ -1,13 +1,80 @@
 'use client'
 import { AuthContext } from '@/contexts/AuthContext';
-import React, { useContext } from 'react'
+import React, { useContext,useEffect, useState } from 'react'
+import { getAllBugs } from '@/services/bugs';
+import { getALLProjects } from '@/services/projects';
+import { getDevelopers } from '@/services/projects';
+import { StatCard } from './StatCard';
+
 
 const QADashboard = () => {
-  const {user} = useContext(AuthContext);  
+  const { user } = useContext(AuthContext);
+
+  const [bugsLength, setBugsLength] = useState(null);
+  const [projectsLength, setProjectsLength] = useState(null);
+  const [developersLength, setDevelopersLength] = useState(null);
+
+  const getBugsLength = async () => {
+    try{
+      const getBugs = await getAllBugs();
+      console.log("Length of bugs", getBugs.length)
+      const lengthofBugs = getBugs.length;
+      setBugsLength(lengthofBugs);
+    }
+    catch(error){
+      console.error("Error:", error)
+      throw error;
+    }
+  }
+  const getProjectsLength = async () => {
+
+    try{
+      const getProjects = await getALLProjects();
+      console.log("Length of Projects", getProjects.length)
+      const lengthOfProjects = getProjects.length;
+      setProjectsLength(lengthOfProjects);
+    }
+
+    catch(error){
+      console.error("Error:", error)
+      throw error;
+    }
+
+  }
+  const getDevsLength = async () => {
+
+    try{
+      const getDevs = await getDevelopers();
+      console.log("Length of Devs", getDevelopers.length)
+      const lengthOfDevs = getDevs.length;
+      setDevelopersLength(lengthOfDevs);
+    }
+
+    catch(error){
+      console.error("Error:", error)
+      throw error;
+    }
+
+  }
+
+  useEffect(()=> {
+    getBugsLength();
+    getProjectsLength();
+    getDevsLength();
+  },[])
+
   return (
-      <div className='flex justify-center mt-10'>
-        <h1>This is the {user?.name} Dashboard</h1>
-    </div>
+    <section className='w-full px-3 sm:px-4 md:px-6'>
+      <div className='max-w-[1040px] mx-auto mt-6 md:mt-10'>
+        <h1>Welcome {user.name}</h1>
+        <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+             <StatCard title="Total Bugs" value={bugsLength} />
+             <StatCard title="Total Projects" value={projectsLength} />
+             <StatCard title="Total Developers" value={developersLength} />
+        </div>
+
+      </div>
+    </section>
   )
 }
 

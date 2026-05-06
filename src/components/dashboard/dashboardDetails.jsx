@@ -6,6 +6,7 @@ import ManagerDashboard from "./ManagerDashboard";
 import DeveloperDashbaord from "./DeveloperDashbaord";
 import QADashboard from "./QADashboard";
 
+
 export default function DashboardDetails() {
   const { user } = useContext(AuthContext);
 
@@ -17,5 +18,5 @@ export default function DashboardDetails() {
     QA: <QADashboard />,
   };
 
-  return roleMap[user.role] || <p>Unauthorized role</p>;
+  return roleMap[user?.role] || <p>Unauthorized role</p>;
 }

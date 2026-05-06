@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,26 +10,45 @@ import { showToast } from "@/lib/toast.js";
 import { useContext } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { sidebarConfig } from "@/constants/sidebarConfig.js";
+import { signOut } from "next-auth/react";
 
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useContext(AuthContext);
+  const { user,loading } = useContext(AuthContext);
+
+
   console.log("User", user)
-    
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+
+  // console.debug('loading:', user,loading);
+
+
+  // useEffect(() => {
+  //   console.log('console my cde.l;sd;l][][][][][][][][][][][][][][')
+  // }, [user, loading]);
+
+  if (loading) {
+  return (
+    <aside className={`bg-sidebar-background text-sidebar-text h-screen p-5 transition-all duration-300 ${open ? "w-60" : "w-20"}`}>
+      <div className="animate-pulse space-y-3 mt-10">
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="h-8 bg-sidebar-text/10 rounded-md" />
+        ))}
+      </div>
+    </aside>
+  );
+}
   const sidebarData = sidebarConfig[user?.role] || [];
   console.log("Sidebar dara", sidebarData);
-
   const handleLogout = async () => {
-    const result = await Logout();
-    showToast.success(result.message);
-    router.push(ROUTES.ui.AUTH.LOGIN);
-  };
+  showToast.success("Log out successfully");
+
+  await signOut({ redirect: false });
+
+  router.push(ROUTES.ui.AUTH.LOGIN);
+};
 
   return (
     <aside

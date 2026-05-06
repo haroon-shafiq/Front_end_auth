@@ -2,6 +2,7 @@ import axios from "axios"
 import { handleApiError } from "@/utils/api/error-handler"
 import { showToast } from "@/lib/toast"
 import { env } from "@/config/env"
+import { getSession } from "next-auth/react"
 
 export const api = axios.create({
   baseURL: env.apiUrl,
@@ -23,6 +24,21 @@ api.interceptors.response.use(
 
     return Promise.reject(error)
   }
+)
+api.interceptors.request.use(
+  async (config) => {
+    const session = await getSession();
+    console.log("Sesssion______________+++++", session)
+    if(session?.accessToken){
+      config.headers.Authorization = `Bearer ${session.accessToken}`
+    }
+      return config
+  },
+  (error) => {
+    // Promise.reject(error);
+    console.error("Error", error)
+  }
+
 )
 // api.interceptors.request.use((config) => {
 //   // const token = localStorage.getItem("token")
