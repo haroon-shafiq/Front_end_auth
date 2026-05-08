@@ -66,8 +66,29 @@ export const getDevelopersByProject = async (projectId) => {
 export const GetBugByID = async (bugID) => {
     try{
         const res = await api.get(ROUTES.API_ROUTES.GETBUGBYID(bugID));
+        console.log("Respone", res);
         return res.data;
     } catch (error) {
+        console.error("New Error", error);
+        throw error;
+    }
+}
+export const DeleteBug = async (bugID) => {
+    try{
+        const res = await api.delete(ROUTES.API_ROUTES.DELETEBUG(bugID));
+        return res.data;
+    }catch(error){
+        console.error("New error", error)
+        throw error;
+    }
+}
+
+export const UpdateStatus = async (bugID, data) => {
+    try{
+        const res = await api.patch(ROUTES.API_ROUTES.UPDATESTATUS(bugID), data)
+        return res.data;
+    }catch(error){
+        console.error("New error", error);
         throw error;
     }
 }

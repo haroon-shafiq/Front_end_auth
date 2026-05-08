@@ -50,3 +50,11 @@ export const getProjectsByDeveloper = async () => {
     throw error;
   }
 };
+export const deleteProject = async (projectID) => {
+  try{
+    const res = await api.delete(ROUTES.API_ROUTES.DELETEPROJECT(projectID));
+    return res.data;
+  }catch(error){
+    throw error;
+  }
+}

@@ -2,7 +2,7 @@
 import { AuthContext } from '@/contexts/AuthContext';
 import React, { useContext,useEffect, useState } from 'react'
 
-import { getProject } from '@/services/projects';
+import { getALLProjects } from '@/services/projects';
 import { getDevelopers } from '@/services/projects';
 import { StatCard } from './StatCard';
 
@@ -17,7 +17,7 @@ const ManagerDashboard = () => {
   const getProjectsLength = async () => {
 
     try{
-      const getProjects = await getProject();
+      const getProjects = await getALLProjects();
       console.log("Length of Projects", getProjects.length)
       const lengthOfProjects = getProjects.length;
       setProjectsLength(lengthOfProjects);
@@ -53,10 +53,9 @@ const ManagerDashboard = () => {
   return (
     <section className='w-full px-3 sm:px-4 md:px-6'>
       <div className='max-w-[1040px] mx-auto mt-6 md:mt-10'>
-        <h1>Welcome {user.name}</h1>
         <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 '>
-             <StatCard title="Total Projects" value={projectsLength} />
-             <StatCard title="Total Developers" value={developersLength} />
+             <StatCard title="Total Projects" value={projectsLength} href="/getAllProjecs"/>
+             <StatCard title="Total Developers" value={developersLength} href="/"/>
         </div>
 
       </div>

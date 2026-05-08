@@ -1,189 +1,193 @@
 'use client';
+
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
-import { useEffect,useContext } from "react";
-import { Button } from "../ui/button";
-import { useState } from "react";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../ui/table";
-import { bugTableHead } from "@/constants/table";
-import BugFormModal from "../modals/BugForm";
-import { createBug, getAllBugs } from "@/services/bugs";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell
+} from "../ui/table";
+import { getProjectsByDeveloper } from "@/services/projects";
 import { GetBugByID } from "@/services/bugs";
+import { StatusEditModal } from "../modals/StatusEditModal";
+import { Button } from "../ui/button";
 import { BugDetailModal } from "../modals/BugDetailModal";
-import { CircleLoader } from "react-spinners";
-import { updateBug } from "@/services/bugs";
-
-
+import { UpdateStatus } from "@/services/bugs";
+import { DeveloperTable } from "@/constants/table";
+import { useRouter } from "next/navigation";
+import { showToast } from "@/lib/toast";
 
 export const BugDetails = () => {
-
-  const {user} = useContext(AuthContext);  
-  const [open, setOpen] = useState(false);
-
-
-  const [bugs, setBugs] = useState([]); 
+  const { user } = useContext(AuthContext);
+  const [projects, setProjects] = useState([]);
   const [selectedBug, setSelectedBug] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [edit, setEdit] = useState(false);
-  const [editBug, setEditBug] = useState(null);           
-
-  // const [selectBugUpdate, setSelectBugUpdate] = useState(null);
-
-  const fetchData = async () => {
-    try {
-      const response = await getAllBugs();
-      console.log("Fetched bugs", response);
-      setBugs(response);
-    } catch (error) {
-      console.error("Error fetching data", error);
-    }
-  };
-
-  const handleSubmit = async (data) => {
-    console.log("Form data to submit", data);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+ const [statusBug, setStatusBug] = useState(null);
+  const router = useRouter()
   
-    try {
-      setLoading(true);
-
-      const res = await createBug(data);
-      console.log("Bug created successfully", res);
-      setOpen(false);
-
-      if (res.success == true) {
-        fetchData();
+  useEffect(() => {
+      if(user?.role !== "DEVELOPER"){
+        showToast.error("You dont have permission to access this page");
+    
+        router.push("/dashboard");
       }
-    } catch (err) {
-      console.error("Create bug error", err);
-    }
-    finally{
-      setLoading(false)
-    }
-
-  };
-
-const handleUpdate = async (data) => {
-    console.log("Data being sent:", data);
-
-    console.log("editBug:", editBug);       
-  console.log("editBug.id:", editBug?.id); 
-  try {
-    setLoading(true);
-    const res = await updateBug(editBug.id, data);
-    if (res.success) {
-      fetchData();
-      setOpen(false);
-      setEdit(false);
-      setEditBug(null);   
-    }
-  } catch (err) {
-    console.error("Update bug error", err);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  const HandleView = async (bugID) => {
-    const res = await GetBugByID(bugID);
-    console.log("Fetched bug details", res);
-    if (res.success == true) {
-      setSelectedBug(res.bug); 
-    }
-
-
-  };
+    }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-  if (loading) {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <CircleLoader />
-    </div>
-  );
-}
+    if (!user?.id) return;
+
+    const fetchProjects = async () => {
+      try {
+        const data = await getProjectsByDeveloper();
+        setProjects(data || []);
+      } catch (error) {
+        console.error("Error fetching projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, [user?.id]);
+
+  const allBugs = [];
+
+  projects.forEach(project => {
+  const bugs = project.bugs || [];
+
+  bugs.forEach(bug => {
+      if (bug.assignedTo?.email == user?.email) {
+      allBugs.push(bug);
+    }
+  });
+});
+
+  const filteredBugs = allBugs.filter((bug) => {
+    if(statusFilter === "ALL" || bug.status === statusFilter){
+      return statusFilter
+    };
+  });
+
+  const handleView = async (bugID) => {
+    const res = await GetBugByID(bugID);
+    if (res.success) setSelectedBug(res.bug);
+  };
+  const handleStatus = (bugID) => {
+  const bug = allBugs.find((b) => b.id === bugID);
+  setStatusBug(bug);
+};
 
   return (
     <div className="w-full">
       <div className="max-w-[1040px] mx-auto">
-        <div className="flex justify-between items-center mt-10">
-          <h1 className="text-xl font-semibold">Welcome {user?.name}</h1>
-          <div className="space-x-3">
-            <Button
-              onClick={() => {
-                setOpen(true);
-                setEdit(false);
-              }}
-            >
-              Create Bug
-            </Button>
-          </div>
+
+    
+        <div className="flex justify-end mt-10 space-x-2">
+          <span>Status:</span>
+          <select
+            className="border px-2 py-1 rounded"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="ALL">All</option>
+            <option value="NEW">New</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
         </div>
-        <div className="mt-10 border rounded">
+
+      
+        <div className="mt-10 border rounded overflow-hidden">
           <Table>
+
             <TableHeader>
               <TableRow>
-                {user?.role === "QA" &&
-                  bugTableHead.map((head) => (
-                    <TableHead key={head.id}>{head.label}</TableHead>
-                  ))}
+                {DeveloperTable.slice(3).map((col) => (
+                  <TableHead key={col.id}>
+                    {col.label}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {bugs?.map((bug) => (
-                <TableRow key={bug.id}>
-                  <TableCell>{bug.title}</TableCell>
-                  <TableCell>
-                    {bug.deadline
-                      ? new Date(bug.deadline).toLocaleDateString()
-                      : "N/A"}
-                  </TableCell>
 
-                  <TableCell>{bug.type}</TableCell>
-                  <TableCell>{bug.status}</TableCell>
-                  <TableCell>{bug.assignedTo?.name}</TableCell>
-                  <TableCell>
-                    <div className="space-x-3">
+            <TableBody>
+              {filteredBugs.length > 0 ? (
+                filteredBugs.map((bug) => (
+                  <TableRow key={bug.id}>
+
+                    <TableCell>{bug.title}</TableCell>
+
+                    <TableCell>
+                      <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          bug.status === "NEW"
+                            ? "bg-green-100 text-green-700"
+                            : bug.status === "RESOLVED"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {bug.status}
+                      </span>
+                    </TableCell>
+
+                    <TableCell>
+                      {bug.deadline
+                        ? new Date(bug.deadline).toLocaleDateString("en-CA")
+                        : "No deadline"}
+                    </TableCell>
+
+                    <TableCell>
                       <Button
-                        onClick={() => {
-                          HandleView(bug.id);
-                          setEdit(false);
-                        }}
+                        size="sm"
+                        onClick={() => handleView(bug.id)}
                       >
                         View
                       </Button>
-                      <Button
-                        onClick={() => {
-                          setEdit(true);
-                          setOpen(true);
-                          setEditBug(bug);
-                        }}
-                      >
-                        Edit
+                      <Button size="sm" onClick={()=> handleStatus(bug.id)}>
+                        Edit Status
                       </Button>
-                    </div>
+                    </TableCell>
+
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-5">
+                    No bugs found
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
+
           </Table>
         </div>
 
-        <BugFormModal
-          isOpen={open}
-          onClose={() => {
-            setOpen(false);
-            setEdit(false);
-            setSelectedBug(null);
-          }}
-          onSubmit={edit ? handleUpdate : handleSubmit}
-          isEdit={edit}
-          bugData={editBug}
-        />
+  
         <BugDetailModal
           bug={selectedBug}
           onClose={() => setSelectedBug(null)}
+          projects={projects}
         />
+        <StatusEditModal
+  bug={statusBug}
+  onClose={() => setStatusBug(null)}
+onSave={async (bugID, newStatus) => {
+  try {
+    const res = await UpdateStatus(bugID, { status: newStatus });
+    if (res.success) {
+      showToast.success("Status updated successfully");
+      const data = await getProjectsByDeveloper();
+      setProjects(data || []);
+      setStatusBug(null);
+    }
+  } catch (error) {
+    showToast.error("Failed to update status");
+  }
+}}
+/>
+
       </div>
     </div>
   );

@@ -9,7 +9,8 @@ const managerTableHead = [
     id: 4,
     label: "Assigned Developer",
   },
-  {id:5, label: "Email"}
+  {id:5, label: "Email"},
+  {id:6, label: "Action"}
 ];
 const bugTableHead = [
   { id: 1, label: "Name" },
@@ -21,6 +22,7 @@ const bugTableHead = [
   },
   {id: 4, label: "Status" },
   {id: 5, label: "Assigned Developer" },
+  {id: 6, label: "Actions"}
 ];
 const BugType = [
     { id: 1, label: "FEATURE" },
@@ -41,4 +43,10 @@ const DeveloperTable = [
     {id: 6, label: "deadline"},
     {id: 7, label: "Action"}
 ]
-export { managerTableHead, bugTableHead, BugType, BugStatus, DeveloperTable };
+const ManagerInfoTable = [
+      { id: 1, label: "Project Name" },
+      {id: 2, label: "Manager Name"},
+      { id: 3, label: "Description" },
+      { id: 4, label: "Deadline" },
+]
+export { managerTableHead, bugTableHead, BugType, BugStatus, DeveloperTable, ManagerInfoTable };

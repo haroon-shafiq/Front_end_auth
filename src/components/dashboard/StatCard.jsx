@@ -1,8 +1,7 @@
-'use client'
-import React from "react";
+import Link from "next/link";
 
-export const StatCard = ({ title, value }) => {
-  return (
+export const StatCard = ({ title, value, href }) => {
+  const content = (
     <div className="border p-4 rounded-2xl w-full">
       <div className="flex flex-col gap-2">
         <h1>{title}</h1>
@@ -10,4 +9,8 @@ export const StatCard = ({ title, value }) => {
       </div>
     </div>
   );
+
+  if (!href) return content;
+
+  return <Link href={href}>{content}</Link>;
 };
