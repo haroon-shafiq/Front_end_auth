@@ -32,6 +32,7 @@ const ProjectDetail = () => {
 
   useEffect(() => {
     if(user && user?.role !== "MANAGER" && user?.role !== "DEVELOPER"){
+      console.log("User role is============>>>>>>>>>>>", user?.role)
       showToast.error("You dont have permission to access this page");
       router.push("/dashboard");
     }
@@ -127,6 +128,9 @@ const DeleteProject = async (projectId) => {
                             .map((pu) => pu.user.email)
                             .join(", ")
                         : "Unassigned"}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={()=> router.push(`/bugs/${project.id}`)}>View Bugs</Button>
                     </TableCell>
                     <TableCell>
                       <Button onClick={() => DeleteProject(project.id)}>Delete</Button>

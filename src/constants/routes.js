@@ -25,6 +25,7 @@ export const ROUTES = {
     UPDATEBUGBYID: (bugID) => `/api/v3/bugs/${bugID}`,
     DELETEBUG: (bugID) => `/api/v3/bugs/${bugID}`,
     UPDATESTATUS: (bugID) => `/api/v3/bugs/${bugID}/status`,
+    GETBUGSBYPROJECTID: (projectId) => `/api/v3/bugs/${projectId}/get-bugs`,
     DEVSBYPROJECT: (projectId) => `/api/v1/auth/developers/${projectId}`,
     PROJECTIDBYDEV: "/api/v2/projects/my-projects",
     UPLOAD_IMAGE: (bugID) => `/api/v4/upload/${bugID}`

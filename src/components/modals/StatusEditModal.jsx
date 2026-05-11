@@ -1,12 +1,6 @@
 import { useState } from "react";
-
-const STATUSES = [
-  { value: "NEW",       bg: "bg-blue-100",   text: "text-blue-800"   },
-  { value: "STARTED",   bg: "bg-amber-100",  text: "text-amber-800"  },
-  { value: "RESOLVED",  bg: "bg-green-100",  text: "text-green-800"  },
-  { value: "COMPLETED", bg: "bg-teal-100",   text: "text-teal-800"   },
-];
-
+import { STATUSES } from "@/constants/table";
+import { X } from "lucide-react";
 export const StatusEditModal = ({ bug, onClose, onSave }) => {
   const isStatus = bug?.status;  
   const [selected, setSelected] = useState(isStatus || "NEW");
@@ -18,8 +12,8 @@ export const StatusEditModal = ({ bug, onClose, onSave }) => {
       <div className="bg-white rounded-xl border border-gray-200 p-6 w-80 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-gray-900">Update bug status</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            ✕
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+            <X/>
           </button>
         </div>
 
@@ -40,7 +34,7 @@ export const StatusEditModal = ({ bug, onClose, onSave }) => {
                 checked={selected === s.value}
                 onChange={() => setSelected(s.value)}
               />
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full `}>
                 {s.value}
               </span>
             </label>
@@ -52,7 +46,7 @@ export const StatusEditModal = ({ bug, onClose, onSave }) => {
             Cancel
           </button>
           <button
-            onClick={() => { onSave(bug.id, selected); onClose(); }}
+            onClick={async () => { await onSave(bug.id, selected); onClose(); }}
             className="px-4 py-1.5 text-sm bg-gray-900 text-white rounded-lg"
           >
             Save status

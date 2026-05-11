@@ -25,7 +25,7 @@ export const BugDetails = () => {
   const [projects, setProjects] = useState([]);
   const [selectedBug, setSelectedBug] = useState(null);
   const [statusFilter, setStatusFilter] = useState("ALL");
- const [statusBug, setStatusBug] = useState(null);
+  const [statusBug, setStatusBug] = useState(null);
   const router = useRouter()
   
   useEffect(() => {
@@ -42,6 +42,7 @@ export const BugDetails = () => {
     const fetchProjects = async () => {
       try {
         const data = await getProjectsByDeveloper();
+        console.log("data in fecth projects", data);
         setProjects(data || []);
       } catch (error) {
         console.error("Error fetching projects", error);
@@ -50,6 +51,7 @@ export const BugDetails = () => {
 
     fetchProjects();
   }, [user?.id]);
+  console.log("Projects==============+>>>>>>>>>>", projects)
 
   const allBugs = [];
 
@@ -58,16 +60,18 @@ export const BugDetails = () => {
 
   bugs.forEach(bug => {
       if (bug.assignedTo?.email == user?.email) {
-      allBugs.push(bug);
+      allBugs.push({...bug, project});
     }
   });
 });
 
+
+
   const filteredBugs = allBugs.filter((bug) => {
-    if(statusFilter === "ALL" || bug.status === statusFilter){
-      return statusFilter
-    };
+      return statusFilter === "ALL" || bug.status === statusFilter; 
+
   });
+  console.log("Bugš",filteredBugs)
 
   const handleView = async (bugID) => {
     const res = await GetBugByID(bugID);
@@ -76,13 +80,26 @@ export const BugDetails = () => {
   const handleStatus = (bugID) => {
   const bug = allBugs.find((b) => b.id === bugID);
   setStatusBug(bug);
-};
+  };
+  
+  const HandleSave = async (bugID, newStatus) => {
+    try {
+      const res = await UpdateStatus(bugID, { status: newStatus });
+      if (res.success) {
+        showToast.success("Status updated successfully");
+        const data = await getProjectsByDeveloper();
+        setProjects(data || []);
+        setStatusBug(null);
+      }
+    } catch (error) {
+      showToast.error("Failed to update status");
+    }
+  }
+
 
   return (
     <div className="w-full">
       <div className="max-w-[1040px] mx-auto">
-
-    
         <div className="flex justify-end mt-10 space-x-2">
           <span>Status:</span>
           <select
@@ -92,21 +109,18 @@ export const BugDetails = () => {
           >
             <option value="ALL">All</option>
             <option value="NEW">New</option>
+            <option value="STARTED">Started</option>
             <option value="RESOLVED">Resolved</option>
-            <option value="REJECTED">Rejected</option>
+            <option value="COMPLETED">Completed</option>
           </select>
         </div>
 
-      
         <div className="mt-10 border rounded overflow-hidden">
           <Table>
-
             <TableHeader>
               <TableRow>
                 {DeveloperTable.slice(3).map((col) => (
-                  <TableHead key={col.id}>
-                    {col.label}
-                  </TableHead>
+                  <TableHead key={col.id}>{col.label}</TableHead>
                 ))}
               </TableRow>
             </TableHeader>
@@ -115,7 +129,6 @@ export const BugDetails = () => {
               {filteredBugs.length > 0 ? (
                 filteredBugs.map((bug) => (
                   <TableRow key={bug.id}>
-
                     <TableCell>{bug.title}</TableCell>
 
                     <TableCell>
@@ -124,8 +137,8 @@ export const BugDetails = () => {
                           bug.status === "NEW"
                             ? "bg-green-100 text-green-700"
                             : bug.status === "RESOLVED"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
                         }`}
                       >
                         {bug.status}
@@ -139,17 +152,19 @@ export const BugDetails = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Button
-                        size="sm"
-                        onClick={() => handleView(bug.id)}
+                      <Button size="sm"
+                        onClick={() =>
+                          router.push(
+                            `/bugs/${bug?.projectId}`,
+                          )
+                        }
                       >
                         View
                       </Button>
-                      <Button size="sm" onClick={()=> handleStatus(bug.id)}>
+                      <Button size="sm" onClick={() => handleStatus(bug.id)}>
                         Edit Status
                       </Button>
                     </TableCell>
-
                   </TableRow>
                 ))
               ) : (
@@ -160,34 +175,19 @@ export const BugDetails = () => {
                 </TableRow>
               )}
             </TableBody>
-
           </Table>
         </div>
 
-  
         <BugDetailModal
           bug={selectedBug}
           onClose={() => setSelectedBug(null)}
           projects={projects}
         />
         <StatusEditModal
-  bug={statusBug}
-  onClose={() => setStatusBug(null)}
-onSave={async (bugID, newStatus) => {
-  try {
-    const res = await UpdateStatus(bugID, { status: newStatus });
-    if (res.success) {
-      showToast.success("Status updated successfully");
-      const data = await getProjectsByDeveloper();
-      setProjects(data || []);
-      setStatusBug(null);
-    }
-  } catch (error) {
-    showToast.error("Failed to update status");
-  }
-}}
-/>
-
+          bug={statusBug}
+          onClose={() => setStatusBug(null)}
+          onSave={HandleSave}
+        />
       </div>
     </div>
   );

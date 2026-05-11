@@ -73,6 +73,15 @@ export const GetBugByID = async (bugID) => {
         throw error;
     }
 }
+export const GetBugByProjectID = async(projectId) => {
+    try{
+        const res = await api.get(ROUTES.API_ROUTES.GETBUGSBYPROJECTID(projectId));
+        console.log("Response");
+        return res.data.project;
+    }catch(error){
+        throw error;
+    }
+}
 export const DeleteBug = async (bugID) => {
     try{
         const res = await api.delete(ROUTES.API_ROUTES.DELETEBUG(bugID));

@@ -1,5 +1,4 @@
-import DashboardDetails from "@/components/dashboard/DashboardDetails";
-
+import DashboardDetails from "@/components/Dashboard"
 export default function Dashboard() {
     return (
         <>

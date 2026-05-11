@@ -54,7 +54,7 @@ const ManagerDashboard = () => {
     <section className='w-full px-3 sm:px-4 md:px-6'>
       <div className='max-w-[1040px] mx-auto mt-6 md:mt-10'>
         <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 '>
-             <StatCard title="Total Projects" value={projectsLength} href="/getAllProjecs"/>
+             <StatCard title="Total Projects" value={projectsLength} href="/getAllProjects"/>
              <StatCard title="Total Developers" value={developersLength} href="/"/>
         </div>
 
