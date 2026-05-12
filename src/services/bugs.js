@@ -33,11 +33,11 @@ export const updateBug = async(bugID, data) => {
         throw error
     }
 }
-export const getAllBugs = async () => {
+export const getAllBugs = async (page, limit) => {
     try {
-        const res = await api.get(ROUTES.API_ROUTES.ALLBUGS);
-        console.log("Get all bugs response", res.data);
-        return res.data.bugs;
+        const res = await api.get(ROUTES.API_ROUTES.ALLBUGS(page,limit));
+        console.log("Get all bugs response", res.data.result);
+        return res.data.result;
     } catch (error) {
         throw error;
     }

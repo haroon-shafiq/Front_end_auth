@@ -19,7 +19,7 @@ const ManagerDashboard = () => {
     try{
       const getProjects = await getALLProjects();
       console.log("Length of Projects", getProjects.length)
-      const lengthOfProjects = getProjects.length;
+      const lengthOfProjects = getProjects.totalProjects;
       setProjectsLength(lengthOfProjects);
     }
 

@@ -29,7 +29,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
     try {
       const res = await getALLProjects();
       console.log("Fetched projects", res);
-      setProjects(res || []);
+      setProjects(res.data || []);
     } catch (error) {
       console.error("Error fetching projects", error);
     }

@@ -11,11 +11,11 @@ export const createProject = async (data) => {
     }
 }
 
-export const getProject = async () => {
+export const getProject = async (page,limit) => {
     try{
-        const res = await api.get(ROUTES.API_ROUTES.GETPROJECT);
+        const res = await api.get(ROUTES.API_ROUTES.GETPROJECT(page,limit));
         console.log("Get projects response",res.data);
-        return res.data.projects;
+        return res.data;
     }
     catch(error){
         throw error;
@@ -32,18 +32,18 @@ export const getDevelopers = async () => {
   }
 };
 
-export const getALLProjects = async () => {
+export const getALLProjects = async (page,limit) => {
     try {
-        const res = await api.get(ROUTES.API_ROUTES.GETPROJECTS);
+        const res = await api.get(ROUTES.API_ROUTES.GETPROJECTS(page, limit));
         console.log("Get all projects response", res.data);
         return res.data.projects;
     } catch (error) {
         throw error;
     }
 }
-export const getProjectsByDeveloper = async () => {
+export const getProjectsByDeveloper = async (page, limit) => {
   try {
-    const res = await api.get(ROUTES.API_ROUTES.PROJECTIDBYDEV);
+    const res = await api.get(ROUTES.API_ROUTES.PROJECTIDBYDEV(page, limit));
     console.log("Get projects by developer response", res.data);
     return res.data.projectIds || [];
   } catch (error) {

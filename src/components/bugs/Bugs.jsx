@@ -22,6 +22,8 @@ import { updateBug } from "@/services/bugs";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/toast";
 import { Router } from "next/router";
+import { CustomPagination } from "../pagination/Pagination";
+import { usePaginationQuery } from "@/hooks/usePaginationQuery";
 
 export const Bugs = () => {
   const { user } = useContext(AuthContext);
@@ -34,6 +36,9 @@ export const Bugs = () => {
   const [edit, setEdit] = useState(false);
   const [editBug, setEditBug] = useState(null);
   const [projectId, setProjectId] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const {page, limit, nextPage, prevPage, changeLimit} = usePaginationQuery(5);
+
 
   // const [selectBugUpdate, setSelectBugUpdate] = useState(null);
   useEffect(() => {
@@ -47,10 +52,11 @@ export const Bugs = () => {
 
   const fetchData = async () => {
     try {
-      const response = await getAllBugs();
+      const response = await getAllBugs(page, limit);
       console.log("Fetched bugs", response);
-      setBugs(response);
-      setProjectId(response.projectId);
+      setBugs(response.data);
+      setProjectId(response.data.projectId);
+      setHasMore(response.hasMore)
     } catch (error) {
       console.error("Error fetching data", error);
     }
@@ -130,7 +136,7 @@ export const Bugs = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, limit]);
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -212,6 +218,16 @@ export const Bugs = () => {
           isEdit={edit}
           bugData={editBug}
         />
+        <div className="mt-10 flex justify-end mr-15">
+          <CustomPagination
+            page={page}
+            limit={limit}
+            hasMore={hasMore}
+            onNext={nextPage}
+            onPrevious={prevPage}
+            onLimitChange={changeLimit}
+          />
+        </div>
         {/* <BugDetailModal
           bug={selectedBug}
           onClose={() => setSelectedBug(null)}

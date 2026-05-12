@@ -19,6 +19,8 @@ import AddProjectModal from "../modals/ProjectForm";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/toast";
+import { usePaginationQuery } from "@/hooks/usePaginationQuery";
+import { CustomPagination } from "../pagination/Pagination";
 
 const ProjectDetail = () => {
   const { user } = useContext(AuthContext);
@@ -29,6 +31,15 @@ const ProjectDetail = () => {
   const router = useRouter()
   const isManager = user?.role === "MANAGER";
   const isDeveloper = user?.role === "DEVELOPER";
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const {
+      page,
+      limit,
+      nextPage,
+      prevPage,
+      changeLimit,
+    } = usePaginationQuery(5);
 
   useEffect(() => {
     if(user && user?.role !== "MANAGER" && user?.role !== "DEVELOPER"){
@@ -40,13 +51,15 @@ const ProjectDetail = () => {
   const fetchProjects = async () => {
   try {
     if (isManager) {
-      const data = await getProject();
-      setProjects(data || []);
+      const res = await getProject(page,limit);
+        setProjects(res.data || []);
+        setHasMore(res.hasMore)
     }
 
     if (isDeveloper) {
-      const data = await getProjectsByDeveloper();
-      setProjectsDev(data || []);
+      const res = await getProjectsByDeveloper(page,limit);
+      setProjectsDev(res.data || []);
+      setHasMore(res.hasMore)
     }
   } catch (error) {
     console.error("Error fetching projects", error);
@@ -56,7 +69,7 @@ useEffect(() => {
   if (user) {
     fetchProjects();
   }
-}, [user, open]);
+}, [user, open, page, limit]);
 const DeleteProject = async (projectId) => {
   const previousProjects = projects;
 
@@ -130,10 +143,16 @@ const DeleteProject = async (projectId) => {
                         : "Unassigned"}
                     </TableCell>
                     <TableCell>
-                      <Button onClick={()=> router.push(`/bugs/${project.id}`)}>View Bugs</Button>
+                      <Button
+                        onClick={() => router.push(`/bugs/${project.id}`)}
+                      >
+                        View Bugs
+                      </Button>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => DeleteProject(project.id)}>Delete</Button>
+                      <Button onClick={() => DeleteProject(project.id)}>
+                        Delete
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -153,6 +172,19 @@ const DeleteProject = async (projectId) => {
       </div>
 
       <AddProjectModal isOpen={open} onClose={() => setOpen(false)} />
+
+
+        <div className="mt-10 flex justify-end mr-15">
+          <CustomPagination
+            page={page}
+            limit={limit}
+            hasMore={hasMore}
+            onNext={nextPage}
+            onPrevious={prevPage}
+            onLimitChange={changeLimit}
+          />
+        </div>
+
     </div>
   );
 };

@@ -17,8 +17,7 @@ const QADashboard = () => {
   const getBugsLength = async () => {
     try{
       const getBugs = await getAllBugs();
-      console.log("Length of bugs", getBugs.length)
-      const lengthofBugs = getBugs.length;
+      const lengthofBugs = getBugs.totalProjects;
       setBugsLength(lengthofBugs);
     }
     catch(error){
@@ -30,8 +29,8 @@ const QADashboard = () => {
 
     try{
       const getProjects = await getALLProjects();
-      console.log("Length of Projects", getProjects.length)
-      const lengthOfProjects = getProjects.length;
+      console.log("Length of Projects", getProjects)
+      const lengthOfProjects = getProjects.totalProjects;
       setProjectsLength(lengthOfProjects);
     }
 
@@ -45,9 +44,9 @@ const QADashboard = () => {
 
     try{
       const getDevs = await getDevelopers();
-      console.log("Length of Devs", getDevelopers.length)
-      const lengthOfDevs = getDevs.length;
-      setDevelopersLength(lengthOfDevs);
+      console.log("Length of Devs", getDevs.length)
+      let lengthOfDev = getDevs.length;
+       setDevelopersLength(lengthOfDev);
     }
 
     catch(error){

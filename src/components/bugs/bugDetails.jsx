@@ -19,6 +19,8 @@ import { UpdateStatus } from "@/services/bugs";
 import { DeveloperTable } from "@/constants/table";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/toast";
+import { usePaginationQuery } from "@/hooks/usePaginationQuery";
+import { CustomPagination } from "../pagination/Pagination";
 
 export const BugDetails = () => {
   const { user } = useContext(AuthContext);
@@ -26,7 +28,15 @@ export const BugDetails = () => {
   const [selectedBug, setSelectedBug] = useState(null);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [statusBug, setStatusBug] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
   const router = useRouter()
+    const {
+        page,
+        limit,
+        nextPage,
+        prevPage,
+        changeLimit,
+      } = usePaginationQuery(5);
   
   useEffect(() => {
       if(user?.role !== "DEVELOPER"){
@@ -41,29 +51,32 @@ export const BugDetails = () => {
 
     const fetchProjects = async () => {
       try {
-        const data = await getProjectsByDeveloper();
-        console.log("data in fecth projects", data);
-        setProjects(data || []);
+        const res = await getProjectsByDeveloper(page, limit);
+        console.log("data in fecth projects", res.data);
+        setProjects(res.data || []);
+        setHasMore(res.hasMore)
       } catch (error) {
         console.error("Error fetching projects", error);
       }
     };
 
     fetchProjects();
-  }, [user?.id]);
+  }, [user?.id], page, limit);
   console.log("Projects==============+>>>>>>>>>>", projects)
-
   const allBugs = [];
 
-  projects.forEach(project => {
-  const bugs = project.bugs || [];
+if (Array.isArray(projects)) {
+  projects.forEach((project) => {
+    const bugs = project?.bugs || [];
 
-  bugs.forEach(bug => {
-      if (bug.assignedTo?.email == user?.email) {
-      allBugs.push({...bug, project});
-    }
+    bugs.forEach((bug) => {
+      if (bug.assignedTo?.email === user?.email) {
+        allBugs.push({ ...bug, project });
+      }
+    });
   });
-});
+}
+
 
 
 
@@ -88,7 +101,8 @@ export const BugDetails = () => {
       if (res.success) {
         showToast.success("Status updated successfully");
         const data = await getProjectsByDeveloper();
-        setProjects(data || []);
+      
+        setProjects(data.data || []);
         setStatusBug(null);
       }
     } catch (error) {
@@ -188,6 +202,16 @@ export const BugDetails = () => {
           onClose={() => setStatusBug(null)}
           onSave={HandleSave}
         />
+                <div className="mt-10 flex justify-end mr-15">
+                  <CustomPagination
+                    page={page}
+                    limit={limit}
+                    hasMore={hasMore}
+                    onNext={nextPage}
+                    onPrevious={prevPage}
+                    onLimitChange={changeLimit}
+                  />
+                </div>
       </div>
     </div>
   );
