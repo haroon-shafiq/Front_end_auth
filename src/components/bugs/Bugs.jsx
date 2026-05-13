@@ -14,14 +14,11 @@ import {
 import { bugTableHead } from "@/constants/table";
 import BugFormModal from "../modals/BugForm";
 import { createBug, getAllBugs } from "@/services/bugs";
-import { GetBugByID } from "@/services/bugs";
 import { DeleteBug } from "@/services/bugs";
-import { BugDetailModal } from "../modals/BugDetailModal";
 import { CircleLoader } from "react-spinners";
 import { updateBug } from "@/services/bugs";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/toast";
-import { Router } from "next/router";
 import { CustomPagination } from "../pagination/Pagination";
 import { usePaginationQuery } from "@/hooks/usePaginationQuery";
 
@@ -35,11 +32,8 @@ export const Bugs = () => {
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [editBug, setEditBug] = useState(null);
-  const [projectId, setProjectId] = useState(null);
   const [hasMore, setHasMore] = useState(false);
-  const {page, limit, nextPage, prevPage, changeLimit} = usePaginationQuery(5);
-
-
+  const {page, limit, nextPage, prevPage, changeLimit, checkPageLimit} = usePaginationQuery(5);
   // const [selectBugUpdate, setSelectBugUpdate] = useState(null);
   useEffect(() => {
     if (user?.role !== "QA") {
@@ -55,7 +49,7 @@ export const Bugs = () => {
       const response = await getAllBugs(page, limit);
       console.log("Fetched bugs", response);
       setBugs(response.data);
-      setProjectId(response.data.projectId);
+      checkPageLimit(page, limit, response.totalCount)
       setHasMore(response.hasMore)
     } catch (error) {
       console.error("Error fetching data", error);
@@ -100,14 +94,6 @@ export const Bugs = () => {
       console.error("Update bug error", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const HandleView = async (bugID) => {
-    const res = await GetBugByID(bugID);
-    console.log("Fetched bug details", res);
-    if (res.success == true) {
-      setSelectedBug(res.bug);
     }
   };
   const HandleDeleteBug = async (bugID) => {
@@ -228,10 +214,6 @@ export const Bugs = () => {
             onLimitChange={changeLimit}
           />
         </div>
-        {/* <BugDetailModal
-          bug={selectedBug}
-          onClose={() => setSelectedBug(null)}
-        /> */}
       </div>
     </div>
   );

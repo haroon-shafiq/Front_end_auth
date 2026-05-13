@@ -39,6 +39,7 @@ const ProjectDetail = () => {
       nextPage,
       prevPage,
       changeLimit,
+      checkPageLimit
     } = usePaginationQuery(5);
 
   useEffect(() => {
@@ -53,12 +54,14 @@ const ProjectDetail = () => {
     if (isManager) {
       const res = await getProject(page,limit);
         setProjects(res.data || []);
+        checkPageLimit(page, limit, res.totalCount)
         setHasMore(res.hasMore)
     }
 
     if (isDeveloper) {
       const res = await getProjectsByDeveloper(page,limit);
       setProjectsDev(res.data || []);
+      checkPageLimit(page, limit, res.totalCount)
       setHasMore(res.hasMore)
     }
   } catch (error) {
@@ -141,6 +144,9 @@ const DeleteProject = async (projectId) => {
                             .map((pu) => pu.user.email)
                             .join(", ")
                         : "Unassigned"}
+                    </TableCell>
+                       <TableCell>
+                      {project.projectUsers[0].acceptInvite == true ? "Accepted" : "Pending"}
                     </TableCell>
                     <TableCell>
                       <Button

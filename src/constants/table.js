@@ -10,7 +10,8 @@ const managerTableHead = [
     label: "Assigned Developer",
   },
   { id: 5, label: "Email" },
-  { id: 6, label: "Action" },
+  {id:6, label: "Status of Invitation"},
+  { id: 7, label: "Action" },
 ];
 const bugTableHead = [
   { id: 1, label: "Name" },

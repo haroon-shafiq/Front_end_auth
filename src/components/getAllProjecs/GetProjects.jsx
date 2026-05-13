@@ -42,7 +42,7 @@ export default function GetProjects() {
         const res = await getALLProjects(page, limit);
         
         console.log("Response in projects fetch", res);
-        checkPageLimit(page,limit, res.totalProjects);
+        checkPageLimit(page,limit, res.totalCount);
         setProjects(res.data || []);
         setHasMore(res.hasMore);
       } catch (error) {

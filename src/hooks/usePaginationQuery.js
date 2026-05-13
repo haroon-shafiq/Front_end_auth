@@ -64,8 +64,8 @@ export const usePaginationQuery = (defaultLimit = 5) => {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const checkPageLimit = (page, limit, totalProjects) => {
-    const totalPages = Math.ceil(totalProjects / limit);
+  const checkPageLimit = (page, limit, totalCount) => {
+    const totalPages = Math.ceil(totalCount / limit);
 
     if (totalPages > 0 && page > totalPages) {
       updatePagination(1, limit);
@@ -76,8 +76,12 @@ export const usePaginationQuery = (defaultLimit = 5) => {
   useEffect(() => {
     const rawLimit = Number(searchParams.get("limit"));
     const rawPage = Number(searchParams.get("page"));
+    if (rawLimit > 50) {
+        updatePagination(1, 50);
+        return;
+      }
 
-    if (!ALLOWED_LIMITS.includes(rawLimit) || rawPage < 1) {
+    if (!ALLOWED_LIMITS.includes(rawLimit) || rawPage < 1 ) {
       updatePagination(Math.max(rawPage || 1, 1), defaultLimit);
     }
   }, []);

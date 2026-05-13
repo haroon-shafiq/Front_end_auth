@@ -36,6 +36,7 @@ export const BugDetails = () => {
         nextPage,
         prevPage,
         changeLimit,
+        checkPageLimit
       } = usePaginationQuery(5);
   
   useEffect(() => {
@@ -54,6 +55,7 @@ export const BugDetails = () => {
         const res = await getProjectsByDeveloper(page, limit);
         console.log("data in fecth projects", res.data);
         setProjects(res.data || []);
+        checkPageLimit(page, limit, res.totalCount)
         setHasMore(res.hasMore)
       } catch (error) {
         console.error("Error fetching projects", error);

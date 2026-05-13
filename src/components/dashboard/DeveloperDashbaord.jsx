@@ -37,8 +37,8 @@ const DeveloperDashbaord = () => {
   const getProjectsLength = async () => {
     try {
       const getProjects = await getProjectsByDeveloper();
-      console.log("Length of Projects", getProjects.totalProjects);
-      const lengthOfProjects = getProjects.totalProjects;
+      console.log("Length of Projects", getProjects.totalCount);
+      const lengthOfProjects = getProjects.totalCount;
       setProjectsLength(lengthOfProjects);
     } catch (error) {
       console.error("Error:", error);

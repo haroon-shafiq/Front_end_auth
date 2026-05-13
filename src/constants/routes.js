@@ -28,7 +28,8 @@ export const ROUTES = {
     GETBUGSBYPROJECTID: (projectId) => `/api/v3/bugs/${projectId}/get-bugs`,
     DEVSBYPROJECT: (projectId) => `/api/v1/auth/developers/${projectId}`,
     PROJECTIDBYDEV: (page, limit) => `/api/v2/projects/my-projects/?page=${page}&limit=${limit}`,
-    UPLOAD_IMAGE: (bugID) => `/api/v4/upload/${bugID}`
+    UPLOAD_IMAGE: (bugID) => `/api/v4/upload/${bugID}`,
+    ACCEPTINVITE: (token) => `/api/v2/projects/inviteAccept?token=${token}`,
   },
   SIDEBAR: [
     { href: "/dashboard", label: "Dashboard" },

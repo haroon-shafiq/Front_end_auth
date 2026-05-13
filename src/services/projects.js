@@ -58,3 +58,13 @@ export const deleteProject = async (projectID) => {
     throw error;
   }
 }
+export const acceptInvite = async (token) => {
+  try {
+    const res = await api.get(ROUTES.API_ROUTES.ACCEPTINVITE(token));
+    console.log("res=>>>>>", res);
+    return res.data;
+  } catch (error) {
+    console.error("Error===========>>>>>>>>", error);
+    throw error;
+  }
+};

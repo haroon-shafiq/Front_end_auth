@@ -113,7 +113,7 @@ const AddProjectModal = ({ isOpen, onClose }) => {
                   checked={form.developerIDs.includes(dev.id)}
                   onChange={() => handleCheckbox(dev.id)}
                 />
-                {dev.name}
+                {dev.email}
               </label>
             ))}
           </div>
