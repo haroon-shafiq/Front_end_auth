@@ -30,7 +30,10 @@ const QADashboard = () => {
     try{
       const getProjects = await getALLProjects();
       console.log("Length of Projects", getProjects)
-      const lengthOfProjects = getProjects.totalCount;
+      const acceptedProjects = (getProjects.data || []).filter((project) =>
+      project.projectUsers?.some((pu) => pu.acceptInvite === true)
+    );
+    const lengthOfProjects = acceptedProjects.length;
       setProjectsLength(lengthOfProjects);
     }
 

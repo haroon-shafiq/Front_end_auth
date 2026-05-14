@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getDevelopers, createProject } from "@/services/projects";
 import { Button } from "../ui/button";
+import { RingLoader } from "react-spinners";
 
 const AddProjectModal = ({ isOpen, onClose }) => {
   const [form, setForm] = useState({
@@ -11,9 +12,11 @@ const AddProjectModal = ({ isOpen, onClose }) => {
     deadline: "",
     developerIDs: [],
   });
+  
 
   const [developers, setDevelopers] = useState([]);
   const [loadingDevs, setLoadingDevs] = useState(false);
+  const [createProjectLoading, setCreateProjectLoading] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -57,6 +60,7 @@ const AddProjectModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async () => {
     try {
+      setCreateProjectLoading(true);
       await createProject(form);
       onClose();
       setForm({
@@ -65,10 +69,23 @@ const AddProjectModal = ({ isOpen, onClose }) => {
         deadline: "",
         developerIDs: [],
       });
+
     } catch (err) {
       console.error("Create project error", err);
     }
+    finally{
+      setCreateProjectLoading(false);
+
+    }
   };
+  if(createProjectLoading){
+    return(
+    <div className="flex items-center justify-center h-screen">
+      <RingLoader/>
+    </div>
+    )
+  }
+  
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">

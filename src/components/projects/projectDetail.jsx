@@ -27,73 +27,68 @@ const ProjectDetail = () => {
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [projectsDev, setProjectsDev] = useState([]);
-  const [activeProject, setactiveProject] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const isManager = user?.role === "MANAGER";
   const isDeveloper = user?.role === "DEVELOPER";
   const [hasMore, setHasMore] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const {
-      page,
-      limit,
-      nextPage,
-      prevPage,
-      changeLimit,
-      checkPageLimit
-    } = usePaginationQuery(5);
+  const { page, limit, nextPage, prevPage, changeLimit, checkPageLimit } = usePaginationQuery(5);
 
   useEffect(() => {
-    if(user && user?.role !== "MANAGER" && user?.role !== "DEVELOPER"){
-      console.log("User role is============>>>>>>>>>>>", user?.role)
+    if (user && user?.role !== "MANAGER" && user?.role !== "DEVELOPER") {
+      console.log("User role is============>>>>>>>>>>>", user?.role);
       showToast.error("You dont have permission to access this page");
       router.push("/dashboard");
     }
   }, []);
   const fetchProjects = async () => {
-  try {
-    if (isManager) {
-      const res = await getProject(page,limit);
+    try {
+      if (isManager) {
+        const res = await getProject(page, limit);
         setProjects(res.data || []);
-        checkPageLimit(page, limit, res.totalCount)
-        setHasMore(res.hasMore)
+        checkPageLimit(page, limit, res.totalCount);
+        setHasMore(res.hasMore);
+      }
+
+      if (isDeveloper) {
+        const res = await getProjectsByDeveloper(page, limit);
+        console.log(
+          "Respone in the projects fetching in the dev=======>>>>>>",
+          res,
+        );
+        setProjectsDev(res.data || []);
+        checkPageLimit(page, limit, res.totalCount);
+        setHasMore(res.hasMore);
+      }
+    } catch (error) {
+      console.error("Error fetching projects", error);
     }
-
-    if (isDeveloper) {
-      const res = await getProjectsByDeveloper(page,limit);
-      setProjectsDev(res.data || []);
-      checkPageLimit(page, limit, res.totalCount)
-      setHasMore(res.hasMore)
+  };
+  useEffect(() => {
+    if (user) {
+      fetchProjects();
     }
-  } catch (error) {
-    console.error("Error fetching projects", error);
-  }
-};
-useEffect(() => {
-  if (user) {
-    fetchProjects();
-  }
-}, [user, open, page, limit]);
-const DeleteProject = async (projectId) => {
-  const previousProjects = projects;
+  }, [user, open, page, limit]);
+  const DeleteProject = async (projectId) => {
+    const previousProjects = projects;
 
-  setProjects((prev) =>
-    prev.filter((project) => project.id !== projectId)
-  );
+    setProjects((prev) => prev.filter((project) => project.id !== projectId));
 
-  try {
-    const res = await deleteProject(projectId);
+    try {
+      const res = await deleteProject(projectId);
 
-    if (res.success) {
-      showToast.success("Project deleted successfully");
-    } else {
+      if (res.success) {
+        showToast.success("Project deleted successfully");
+      } else {
+        setProjects(previousProjects);
+        showToast.error("Failed to delete project");
+      }
+    } catch (error) {
+      console.error("Error deleting project", error);
       setProjects(previousProjects);
-      showToast.error("Failed to delete project");
     }
-  } catch (error) {
-    console.error("Error deleting project", error);
-    setProjects(previousProjects);
-  }
-};
+  };
+  const isAccepted = (project) =>
+    project.projectUsers?.some((pu) => pu.acceptInvite === true);
   return (
     <div className="w-full">
       <div className="max-w-[1040px] mx-auto">
@@ -145,8 +140,13 @@ const DeleteProject = async (projectId) => {
                             .join(", ")
                         : "Unassigned"}
                     </TableCell>
-                       <TableCell>
-                      {project.projectUsers[0].acceptInvite == true ? "Accepted" : "Pending"}
+
+                    <TableCell>
+                      {project.projectUsers?.some(
+                        (pu) => pu.acceptInvite === true,
+                      )
+                        ? "Accepted"
+                        : "Pending"}
                     </TableCell>
                     <TableCell>
                       <Button
@@ -163,7 +163,7 @@ const DeleteProject = async (projectId) => {
                   </TableRow>
                 ))}
               {isDeveloper &&
-                projectsDev.map((project) => (
+                projectsDev.filter(isAccepted).map((project) => (
                   <TableRow key={project.id}>
                     <TableCell>{project.name}</TableCell>
                     <TableCell>
@@ -179,18 +179,16 @@ const DeleteProject = async (projectId) => {
 
       <AddProjectModal isOpen={open} onClose={() => setOpen(false)} />
 
-
-        <div className="mt-10 flex justify-end mr-15">
-          <CustomPagination
-            page={page}
-            limit={limit}
-            hasMore={hasMore}
-            onNext={nextPage}
-            onPrevious={prevPage}
-            onLimitChange={changeLimit}
-          />
-        </div>
-
+      <div className="mt-10 flex justify-end mr-15">
+        <CustomPagination
+          page={page}
+          limit={limit}
+          hasMore={hasMore}
+          onNext={nextPage}
+          onPrevious={prevPage}
+          onLimitChange={changeLimit}
+        />
+      </div>
     </div>
   );
 };

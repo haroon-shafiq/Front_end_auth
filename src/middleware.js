@@ -18,11 +18,11 @@ export default async function middleware(req) {
     path.startsWith(prefix)
   );
 
-  if (token && isAuthRoute) {
+  if (token?.accessToken && isAuthRoute ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  if (!token && isProtectedRoute) {
+  if (!token?.accessToken && isProtectedRoute) {
     return NextResponse.redirect(new URL(ROUTES.ui.AUTH.LOGIN, req.url));
   }
 

@@ -67,43 +67,37 @@ export default function GetProjects() {
   return (
     <section className="w-full">
       <div className="max-w-[1040px] mx-auto mt-10">
-
-
         <Table>
           <TableHeader>
             <TableRow>
               {user?.role === "MANAGER" &&
                 ManagerInfoTable.map((head) => (
-                  <TableHead key={head.id}>
-                    {head.label}
-                  </TableHead>
+                  <TableHead key={head.id}>{head.label}</TableHead>
                 ))}
             </TableRow>
           </TableHeader>
-
           <TableBody>
-            {projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell>{project?.name}</TableCell>
+            {projects
+              .filter((project) =>
+                project.projectUsers?.some((pu) => pu.acceptInvite === true),
+              )
+              .map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell>{project?.name}</TableCell>
 
-                <TableCell>
-                  {project?.manager?.name}
-                </TableCell>
+                  <TableCell>{project?.manager?.name}</TableCell>
 
-                <TableCell>
-                  {project?.description}
-                </TableCell>
+                  <TableCell>{project?.description}</TableCell>
 
-                <TableCell>
-                  {project?.deadline
-                    ? new Date(project.deadline).toLocaleDateString()
-                    : "N/A"}
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell>
+                    {project?.deadline
+                      ? new Date(project.deadline).toLocaleDateString()
+                      : "N/A"}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
-
 
         <div className="mt-6 flex justify-end">
           <CustomPagination
@@ -115,7 +109,6 @@ export default function GetProjects() {
             onLimitChange={changeLimit}
           />
         </div>
-
       </div>
     </section>
   );

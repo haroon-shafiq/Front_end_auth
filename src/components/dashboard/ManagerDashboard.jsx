@@ -12,23 +12,27 @@ const ManagerDashboard = () => {
 
   const [projectsLength, setProjectsLength] = useState(null);
   const [developersLength, setDevelopersLength] = useState(null);
-
-
+  
   const getProjectsLength = async () => {
+  try {
+    const getProjects = await getALLProjects();
 
-    try{
-      const getProjects = await getALLProjects();
-      console.log("Length of Projects", getProjects.length)
-      const lengthOfProjects = getProjects.totalCount;
-      setProjectsLength(lengthOfProjects);
-    }
+    console.log("Length of Projects", getProjects);
 
-    catch(error){
-      console.error("Error:", error)
-      throw error;
-    }
+    const acceptedProjects = getProjects.data.filter((project) =>
+      project.projectUsers?.some(
+        (pu) => pu.acceptInvite === true
+      )
+    );
 
+    const lengthOfProjects = acceptedProjects.length;
+
+    setProjectsLength(lengthOfProjects);
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
   }
+};
   const getDevsLength = async () => {
 
     try{

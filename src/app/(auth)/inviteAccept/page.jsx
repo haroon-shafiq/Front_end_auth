@@ -1,73 +1,125 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { useSearchParams, useRouter } from "next/navigation";
+// import { acceptInvite } from "@/services/projects";
+// import { AuthContext } from "@/contexts/AuthContext";
+// import { useContext } from "react";
+// import { CircleLoader } from "react-spinners";
+
+
+// export default function AcceptInvitePage() {
+//   const searchParams = useSearchParams();
+//   const router = useRouter();
+//   const token = searchParams.get("token");
+//   const [status, setStatus] = useState("loading");
+//   const [message, setMessage] = useState("");
+//   const {user} = useContext(AuthContext);
+//   console.log("++++++++++>>>>>>>", user);
+  
+
+// const accept = async () => {
+//       try {
+//         const res = await acceptInvite(token);
+//         console.log("Response===========>>>>>>>>.",res);
+//         setStatus("success");
+//         setMessage(res.message);
+//         router.push('/signin')
+//       } catch (error) {
+//         setStatus("error");
+//         setMessage(error.message)
+//       }
+//     };
+//       useEffect(() => {
+//     const token = searchParams.get("token");
+
+//     if (!token) {
+//       router.push("/signin");
+//       return;
+//     }
+
+
+//     localStorage.setItem("inviteToken", token);
+
+//     router.push("/signin");
+//   }, []);
+
+
+//   useEffect(() => {
+    
+//     if (!token) {
+//       setStatus("error");
+//       setMessage("Invalid invitation link.");
+//       return;
+//     }
+//     accept();
+//   }, [token]);
+
+//   if (status === "loading") {
+//   return (
+//     <div className="flex justify-center items-center min-h-screen">
+//       <CircleLoader size={80} />
+//     </div>
+//   );
+// }
+
+//   return (
+//     <div className="flex items-center justify-center min-h-screen bg-gray-50">
+//       <div className="text-center max-w-sm w-full">
+
+//         {status === "loading" && (
+//             <p className="text-gray-500">Verifying invitation...</p>
+//         )}
+
+//         {status === "success" && (
+//           <>
+//             <h2 className="font-semibold text-gray-800 mb-1">You're Verified!</h2>
+//             <p className="text-gray-500 text-xl">{message}</p>
+//           </>
+//         )}
+
+//         {status === "error" && (
+//           <>
+//             <h2 className="font-semibold text-gray-800 mb-1">{message}</h2>
+//             <p className="text-gray-500 text-sm">{message}</p>
+//             <button
+//               onClick={() => router.push("/signin")}
+//               className="mt-5 px-5 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700"
+//             >
+//               Back to Page
+//             </button>
+//           </>
+//         )}
+
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { acceptInvite } from "@/services/projects";
-import { CircleLoader } from "react-spinners";
 
 export default function AcceptInvitePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get("token");
-  const [status, setStatus] = useState("loading");
-  const [message, setMessage] = useState("");
-
-
-const accept = async () => {
-      try {
-        const res = await acceptInvite(token);
-        console.log("Response===========>>>>>>>>.",res);
-        setStatus("success");
-        setMessage(res.message);
-      } catch (error) {
-        setStatus("error");
-        setMessage(error.message)
-      }
-    };
-
 
   useEffect(() => {
+    const token = searchParams.get("token");
+
     if (!token) {
-      setStatus("error");
-      setMessage("Invalid invitation link.");
+      router.push("/signin");
       return;
     }
-    accept();
-  }, [token]);
 
-  if(status === "loading"){
-    <CircleLoader/>
-  }
+    localStorage.setItem("inviteToken", token);
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center max-w-sm w-full">
 
-        {status === "loading" && (
-            <p className="text-gray-500">Verifying invitation...</p>
-        )}
+    router.push("/signin");
+  }, [searchParams, router]);
 
-        {status === "success" && (
-          <>
-            <h2 className="font-semibold text-gray-800 mb-1">You're Verified!</h2>
-            <p className="text-gray-500 text-xl">{message}</p>
-          </>
-        )}
-
-        {status === "error" && (
-          <>
-            <h2 className="font-semibold text-gray-800 mb-1">{message}</h2>
-            <p className="text-gray-500 text-sm">{message}</p>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="mt-5 px-5 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700"
-            >
-              Go to Dashboard
-            </button>
-          </>
-        )}
-
-      </div>
-    </div>
-  );
+  return null;
 }

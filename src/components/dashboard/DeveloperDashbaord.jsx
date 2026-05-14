@@ -37,8 +37,9 @@ const DeveloperDashbaord = () => {
   const getProjectsLength = async () => {
     try {
       const getProjects = await getProjectsByDeveloper();
-      console.log("Length of Projects", getProjects.totalCount);
-      const lengthOfProjects = getProjects.totalCount;
+      const acceptedProjects = (getProjects.data || []).filter((project) =>
+      project.projectUsers?.some((pu) => pu.acceptInvite === true))
+      const lengthOfProjects = acceptedProjects.length;
       setProjectsLength(lengthOfProjects);
     } catch (error) {
       console.error("Error:", error);

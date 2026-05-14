@@ -24,16 +24,21 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
   const [loadingDevs, setLoadingDevs] = useState(false);
 
   const [file, setFile] = useState(null);
-
+  
   const fetchProjects = async () => {
-    try {
-      const res = await getALLProjects();
-      console.log("Fetched projects", res);
-      setProjects(res.data || []);
-    } catch (error) {
-      console.error("Error fetching projects", error);
-    }
-  };
+  try {
+    const res = await getALLProjects();
+    console.log("Fetched projects", res);
+
+    const acceptedProjects = (res.data || []).filter((project) =>
+      project.projectUsers?.some((pu) => pu.acceptInvite === true)
+    );
+
+    setProjects(acceptedProjects);
+  } catch (error) {
+    console.error("Error fetching projects", error);
+  }
+};
 
   const fetchDevelopersByProject = async (projectId) => {
     if (!projectId) return;
