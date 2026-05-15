@@ -16,7 +16,7 @@ import { StatusEditModal } from "../modals/StatusEditModal";
 import { Button } from "../ui/button";
 import { BugDetailModal } from "../modals/BugDetailModal";
 import { UpdateStatus } from "@/services/bugs";
-import { DeveloperTable } from "@/constants/table";
+import { DEVELOPER_TABLE_HEADER } from "@/constants/table";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/toast";
 import { usePaginationQuery } from "@/hooks/usePaginationQuery";
@@ -30,6 +30,8 @@ export const BugDetails = () => {
   const [statusBug, setStatusBug] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const router = useRouter()
+
+
     const {
         page,
         limit,
@@ -63,7 +65,7 @@ export const BugDetails = () => {
     };
 
     fetchProjects();
-  }, [user?.id], page, limit);
+  }, [user?.id,page, limit] );
   console.log("Projects==============+>>>>>>>>>>", projects)
   const allBugs = [];
 
@@ -86,12 +88,14 @@ if (Array.isArray(projects)) {
       return statusFilter === "ALL" || bug.status === statusFilter; 
 
   });
+  const BUGS_PER_PAGE = limit;
+  const totalBugs = filteredBugs.length; 
+  const totalPages = Math.ceil(totalBugs / BUGS_PER_PAGE)
+  const paginatedBugs = filteredBugs.slice((page - 1) * BUGS_PER_PAGE, page * BUGS_PER_PAGE);
+  const hasMoreBugs = page < totalPages;
+
   console.log("Bugš",filteredBugs)
 
-  const handleView = async (bugID) => {
-    const res = await GetBugByID(bugID);
-    if (res.success) setSelectedBug(res.bug);
-  };
   const handleStatus = (bugID) => {
   const bug = allBugs.find((b) => b.id === bugID);
   setStatusBug(bug);
@@ -102,7 +106,7 @@ if (Array.isArray(projects)) {
       const res = await UpdateStatus(bugID, { status: newStatus });
       if (res.success) {
         showToast.success("Status updated successfully");
-        const data = await getProjectsByDeveloper();
+        const data = await getProjectsByDeveloper(page, limit);
       
         setProjects(data.data || []);
         setStatusBug(null);
@@ -135,7 +139,7 @@ if (Array.isArray(projects)) {
           <Table>
             <TableHeader>
               <TableRow>
-                {DeveloperTable.slice(3).map((col) => (
+                {DEVELOPER_TABLE_HEADER.slice(3).map((col) => (
                   <TableHead key={col.id}>{col.label}</TableHead>
                 ))}
               </TableRow>
@@ -143,7 +147,7 @@ if (Array.isArray(projects)) {
 
             <TableBody>
               {filteredBugs.length > 0 ? (
-                filteredBugs.map((bug) => (
+                paginatedBugs.map((bug) => (
                   <TableRow key={bug.id}>
                     <TableCell>{bug.title}</TableCell>
 
@@ -171,7 +175,7 @@ if (Array.isArray(projects)) {
                       <Button size="sm"
                         onClick={() =>
                           router.push(
-                            `/bugs/${bug?.projectId}`,
+                            `/bugs/${bug?.id}`,
                           )
                         }
                       >
@@ -208,7 +212,7 @@ if (Array.isArray(projects)) {
                   <CustomPagination
                     page={page}
                     limit={limit}
-                    hasMore={hasMore}
+                    hasMore={hasMoreBugs}
                     onNext={nextPage}
                     onPrevious={prevPage}
                     onLimitChange={changeLimit}

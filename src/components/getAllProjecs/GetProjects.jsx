@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "../ui/table";
 
-import { ManagerInfoTable } from "@/constants/table";
+import { MANAGER_INFO_TABLE } from "@/constants/table";
 import { CustomPagination } from "../pagination/Pagination";
 import { usePaginationQuery } from "@/hooks/usePaginationQuery";
 import { CircleLoader } from "react-spinners";
@@ -71,7 +71,7 @@ export default function GetProjects() {
           <TableHeader>
             <TableRow>
               {user?.role === "MANAGER" &&
-                ManagerInfoTable.map((head) => (
+                MANAGER_INFO_TABLE.map((head) => (
                   <TableHead key={head.id}>{head.label}</TableHead>
                 ))}
             </TableRow>

@@ -10,8 +10,8 @@ import {
   TableBody,
   TableCell,
 } from "../ui/table";
-import { managerTableHead } from "@/constants/table";
-import { DeveloperTable } from "@/constants/table";
+import { MANAGER_TABLE_HEADER } from "@/constants/table";
+import { DEVELOPER_TABLE_HEADER } from "@/constants/table";
 import { getProject } from "@/services/projects";
 import { getProjectsByDeveloper } from "@/services/projects";
 import { deleteProject } from "@/services/projects";
@@ -103,11 +103,11 @@ const ProjectDetail = () => {
             <TableHeader>
               <TableRow>
                 {isManager &&
-                  managerTableHead.map((head) => (
+                  MANAGER_TABLE_HEADER.map((head) => (
                     <TableHead key={head.id}>{head.label}</TableHead>
                   ))}
                 {isDeveloper &&
-                  DeveloperTable.slice(0, 3).map((head) => (
+                  DEVELOPER_TABLE_HEADER.slice(0, 3).map((head) => (
                     <TableHead key={head.id}>{head.label}</TableHead>
                   ))}
               </TableRow>

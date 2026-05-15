@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BugType, BugStatus } from "@/constants/table";
+import { BUG_TYPE, BUG_STATUS } from "@/constants/table";
 import { getALLProjects } from "@/services/projects";
 import { getDevelopersByProject } from "@/services/bugs";
 import { Button } from "../ui/button";
@@ -188,7 +188,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
             className="w-full border p-2 rounded"
           >
             <option value="">Select Type</option>
-            {BugType.map((type) => (
+            {BUG_TYPE.map((type) => (
               <option key={type.id} value={type.label}>
                 {type.label}
               </option>
@@ -202,7 +202,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
             className="w-full border p-2 rounded"
           >
             <option value="">Select Status</option>
-            {BugStatus.map((status) => (
+            {BUG_STATUS.map((status) => (
               <option key={status.id} value={status.label}>
                 {status.label}
               </option>

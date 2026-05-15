@@ -1,26 +1,26 @@
 'use client'
+import { Suspense } from "react";
 import { Bugs } from "@/components/bugs/Bugs";
 import { BugDetails } from "@/components/bugs/BugDetails";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useContext } from "react";
-import { useRouter } from "next/navigation";
+import { CircleLoader } from "react-spinners";
+
 const page = () => {
-    const {user} = useContext(AuthContext);
-    console.log("User role============", user)
-    const router = useRouter();
-  
-  if(!user) return <p>Loading...</p>
-  // if(user?.role == "MANAGER"){
-  //   router.push('/dashboard');
-  // }
+  const { user } = useContext(AuthContext);
+
+  if (!user) return (
+    <div className="flex justify-center items-center h-screen">
+      <CircleLoader />
+    </div>
+  );
 
   const checkRole = {
-    DEVELOPER: <BugDetails/>,
-    QA: <Bugs/> 
-  }
-  return checkRole[user?.role];
-}
+    DEVELOPER: <Suspense fallback={<div className="flex justify-center items-center h-screen"><CircleLoader /></div>}><BugDetails /></Suspense>,
+    QA: <Suspense fallback={<div className="flex justify-center items-center h-screen"><CircleLoader /></div>}><Bugs /></Suspense>,
+  };
 
-export default page
+  return checkRole[user?.role] || null;
+};
 
-
+export default page;

@@ -30,7 +30,7 @@ export const authOptions = {
                 catch(error){
                     console.error("Error in auth", error)
                     throw new Error(
-                        error?.response?.dara?.message || "Login failed"
+                        error?.response?.data?.message || "Login failed"
                     );
                 }
             }

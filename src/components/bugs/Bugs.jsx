@@ -11,7 +11,7 @@ import {
   TableBody,
   TableCell,
 } from "../ui/table";
-import { bugTableHead } from "@/constants/table";
+import { BUG_TABLE_HEADER } from "@/constants/table";
 import BugFormModal from "../modals/BugForm";
 import { createBug, getAllBugs } from "@/services/bugs";
 import { DeleteBug } from "@/services/bugs";
@@ -150,7 +150,7 @@ export const Bugs = () => {
             <TableHeader>
               <TableRow>
                 {user?.role === "QA" &&
-                  bugTableHead.map((head) => (
+                  BUG_TABLE_HEADER.map((head) => (
                     <TableHead key={head.id}>{head.label} </TableHead>
                   ))}
               </TableRow>

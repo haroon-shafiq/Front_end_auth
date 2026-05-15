@@ -1,16 +1,18 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GetBugByID, GetBugByProjectID } from "@/services/bugs";
 import { CircleLoader } from "react-spinners";
 import { AuthContext } from "@/contexts/AuthContext";
+import {MANAGERTABLEFORBUGS} from "@/constants/table.js"
 
 const page = () => {
   const params = useParams();
   const id = params.id;
   const { user } = useContext(AuthContext);
   const checkRole = user?.role;
+  const router = useRouter();
 
   const [bugs, setBugs] = useState([]);
   const [projectInfo, setProjectInfo] = useState(null);
@@ -19,26 +21,24 @@ const page = () => {
   useEffect(() => {
     if (!checkRole || !id) return;
 
-    if (checkRole === "MANAGER" || checkRole === "DEVELOPER") {
+    if (checkRole === "MANAGER") {
       getBugByProjectId(id);
-    } else if (checkRole === "QA") {
-      fetchBugById(id); 
+    } else if (checkRole === "DEVELOPER" || checkRole === "QA") {
+      fetchBugById(id);
     }
   }, [checkRole, id]);
-
 
   const getBugByProjectId = async (projectId) => {
     try {
       const res = await GetBugByProjectID(projectId);
-      setBugs(res?.bugs || res || []);
-      setProjectInfo(res?.project || null);
+      setBugs(res?.bugs || []);
+      setProjectInfo({ name: res?.name, description: res?.description });
     } catch (err) {
       console.error("Failed to fetch bugs by project", err);
     } finally {
       setLoading(false);
     }
   };
-
 
   const fetchBugById = async (bugId) => {
     try {
@@ -68,6 +68,68 @@ const page = () => {
       </div>
     );
   }
+
+
+  if (checkRole === "MANAGER") {
+    return (
+      <div className="max-w-5xl mx-auto mt-10 p-6">
+
+        <div className="overflow-hidden border">
+          <div className="border-b px-6 py-4">
+            <h2 className="text-xl font-semibold text-gray-700">All Bugs for the project {projectInfo?.name}</h2>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr>
+                  {MANAGERTABLEFORBUGS.map((table) => (
+                    <th key={table.id} className="p-4 text-left font-medium text-gray-600">{table.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bugs.map((bug) => (
+                  <tr key={bug.id} className="border-t ">
+                    <td className="p-4">{bug.title}</td>
+                    <td className="p-4">{bug.description}</td>
+                    <td className="p-4">
+                      <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          bug.status === "NEW"
+                            ? "bg-green-100 text-green-700"
+                            : bug.status === "RESOLVED"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {bug.status}
+                      </span>
+                    </td>
+                    <td className="p-4">{bug.type}</td>
+                    <td className="p-4">
+                      {bug.deadline
+                        ? new Date(bug.deadline).toLocaleDateString()
+                        : "N/A"}
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => router.push(`/bugs/detail/${bug.id}`)}
+                        className="bg-black text-white px-3 py-1 rounded text-sm "
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   const bug = bugs[0];
 
@@ -100,19 +162,6 @@ const page = () => {
             <div className="overflow-hidden border rounded-xl">
               <table className="w-full">
                 <tbody>
-                  {(checkRole === "MANAGER" || checkRole === "DEVELOPER") && projectInfo && (
-                    <>
-                      <tr className="border-b">
-                        <td className="p-4 font-medium w-[40%]">Project Title</td>
-                        <td className="p-4">{projectInfo?.name}</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-4 font-medium w-[40%]">Project Description</td>
-                        <td className="p-4">{projectInfo?.description}</td>
-                      </tr>
-                    </>
-                  )}
-
                   <tr className="border-b">
                     <td className="p-4 font-medium w-[40%]">Bug Title</td>
                     <td className="p-4">{bug?.title}</td>
