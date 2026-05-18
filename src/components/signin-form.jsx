@@ -53,7 +53,6 @@ export function SignInForm({ className, ...props }) {
     try {
 
       setLoading(true);
-
       const invitationToken = localStorage.getItem("inviteToken");
 
       const res = await signIn("credentials", {
@@ -76,7 +75,8 @@ export function SignInForm({ className, ...props }) {
           const inviteRes = await acceptInvite(invitationToken);
           localStorage.removeItem("inviteToken");
           setMessage(inviteRes.message || "User verified successfully");
-          router.push(ROUTES.ui.AUTH.DASHBOARD);
+
+          // router.push(ROUTES.ui.AUTH.DASHBOARD);
           return;
         } catch (error) {
           console.error("Error===========+>>>>>>>>>", error)
@@ -115,6 +115,14 @@ export function SignInForm({ className, ...props }) {
             <p className="text-muted-foreground">
               {message}
             </p>
+            <button
+              onClick={() => {
+                router.push(ROUTES.ui.AUTH.DASHBOARD);
+              }}
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            >
+              Back to Sign In
+            </button>
           </div>
         )}
       </div>

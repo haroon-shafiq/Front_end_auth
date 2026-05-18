@@ -12,43 +12,34 @@ const initialForm = {
   image: "",
   status: "",
   project: "",
-  developerIDs: [],
+  developerID: "", 
 };
 
-const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
-  console.log("Edit========================",isEdit)
-  console.log("Open========================",isOpen)
+const BugForm = ({ isOpen, onClose, onSubmit, isEdit, bugData }) => {
   const [form, setForm] = useState(initialForm);
-  const [developers, setDevelopers] = useState([]);
+  const [developers, setDevelopers] = useState([]); 
   const [projects, setProjects] = useState([]);
   const [loadingDevs, setLoadingDevs] = useState(false);
-
   const [file, setFile] = useState(null);
-  
+
   const fetchProjects = async () => {
-  try {
-    const res = await getALLProjects();
-    console.log("Fetched projects", res);
-
-    const acceptedProjects = (res.data || []).filter((project) =>
-      project.projectUsers?.some((pu) => pu.acceptInvite === true)
-    );
-
-    setProjects(acceptedProjects);
-  } catch (error) {
-    console.error("Error fetching projects", error);
-  }
-};
+    try {
+      const res = await getALLProjects();
+      const acceptedProjects = (res.data || []).filter((project) =>
+        project.projectUsers?.some((pu) => pu.acceptInvite === true)
+      );
+      setProjects(acceptedProjects);
+    } catch (error) {
+      console.error("Error fetching projects", error);
+    }
+  };
 
   const fetchDevelopersByProject = async (projectId) => {
     if (!projectId) return;
-
     setLoadingDevs(true);
     try {
       const data = await getDevelopersByProject(projectId);
-      const list = data?.projectUsers || [];
-      console.log("Fetched developers for project", data);
-      setDevelopers(list);
+      setDevelopers(data?.projectUsers || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -62,25 +53,25 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
   }, [isOpen]);
 
   useEffect(() => {
-  if (isEdit && bugData) {
-    setForm({
-      title: bugData.title || "",
-      description: bugData.description || "",
-      deadline: bugData.deadline ? bugData.deadline.split("T")[0] : "",
-      type: bugData.type || "",
-      image: "",
-      status: bugData.status || "",
-      project: bugData.project?.id || "",
-      developerIDs: bugData.assignedTo?.id ? [bugData.assignedTo.id] : [],
-    });
+    if (isEdit && bugData) {
+      setForm({
+        title: bugData.title || "",
+        description: bugData.description || "",
+        deadline: bugData.deadline ? bugData.deadline.split("T")[0] : "",
+        type: bugData.type || "",
+        image: "",
+        status: bugData.status || "",
+        project: bugData.project?.id || "",
+        developerID: bugData.assignedTo?.id || "",  
+      });
 
-    if (bugData.project?.id) {
-      fetchDevelopersByProject(bugData.project.id);
+      if (bugData.project?.id) {
+        fetchDevelopersByProject(bugData.project.id);
+      }
+    } else {
+      setForm(initialForm);
     }
-  } else {
-    setForm(initialForm);
-  }
-}, [isEdit, bugData]);
+  }, [isEdit, bugData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,22 +80,17 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
       setForm((prev) => ({
         ...prev,
         project: value,
-        developerIDs: [],
+        developerID: "",  
       }));
-
       fetchDevelopersByProject(value);
       return;
     }
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
-    console.log("File get", file)
     if (!file) return;
 
     const allowedTypes = ["image/png", "image/gif"];
@@ -113,8 +99,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
+    if (file.size > 5 * 1024 * 1024) {
       alert("Max 5MB allowed");
       return;
     }
@@ -122,21 +107,11 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
     setFile(file);
   };
 
-  const handleCheckbox = (id) => {
-    setForm((prev) => {
-      const isSelected = prev.developerIDs.includes(id);
-
-      return {
-        ...prev,
-        developerIDs: isSelected ? [] : [id],
-      };
-    });
-  };
-
   const resetForm = () => {
     setForm(initialForm);
     setDevelopers([]);
     setLoadingDevs(false);
+    setFile(null);
   };
 
   if (!isOpen) return null;
@@ -172,6 +147,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
             onChange={handleChange}
             className="w-full border p-2 rounded"
           />
+
           {!isEdit && (
             <input
               type="file"
@@ -208,6 +184,7 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
               </option>
             ))}
           </select>
+
           {!isEdit && (
             <select
               name="project"
@@ -223,31 +200,28 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
               ))}
             </select>
           )}
-          {!isEdit && (
-            <div className="border p-2 rounded max-h-[150px] overflow-y-auto">
-              <p className="text-sm font-medium mb-2">Select Developers</p>
 
-              {!form.project ? (
-                <p className="text-sm text-gray-500">Select a project first</p>
-              ) : loadingDevs ? (
-                <p>Loading...</p>
-              ) : (
-                developers.map((dev) => (
-                  <label key={dev.user.id} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={form.developerIDs.includes(dev.user.id)}
-                      disabled={
-                        form.developerIDs.length > 0 &&
-                        !form.developerIDs.includes(dev.user.id)
-                      }
-                      onChange={() => handleCheckbox(dev.user.id)}
-                    />
-                    {dev.user.name}
-                  </label>
-                ))
-              )}
-            </div>
+          {!isEdit && (
+            <select
+              name="developerID"
+              value={form.developerID}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              disabled={!form.project || loadingDevs}
+            >
+              <option value="">
+                {!form.project
+                  ? "Select a project first"
+                  : loadingDevs
+                  ? "Loading developers..."
+                  : "Select Developer"}
+              </option>
+              {developers.map((dev) => (
+                <option key={dev.user.id} value={dev.user.id}>
+                  {dev.user.name}
+                </option>
+              ))}
+            </select>
           )}
         </div>
 
@@ -257,7 +231,6 @@ const BugForm = ({ isOpen , onClose, onSubmit, isEdit, bugData }) => {
               resetForm();
               onClose();
             }}
-            className="border px-3 py-1 rounded"
           >
             Cancel
           </Button>

@@ -16,8 +16,20 @@ const page = () => {
   );
 
   const checkRole = {
-    DEVELOPER: <Suspense fallback={<div className="flex justify-center items-center h-screen"><CircleLoader /></div>}><BugDetails /></Suspense>,
-    QA: <Suspense fallback={<div className="flex justify-center items-center h-screen"><CircleLoader /></div>}><Bugs /></Suspense>,
+    DEVELOPER: <Suspense fallback={
+    <div className="flex justify-center items-center h-screen">
+      <CircleLoader />
+      </div>
+      }>
+      <BugDetails />
+      </Suspense>,
+    QA: <Suspense fallback={
+    <div className="flex justify-center items-center h-screen">
+      <CircleLoader />
+      </div>
+      }>
+      <Bugs />
+      </Suspense>,
   };
 
   return checkRole[user?.role] || null;
