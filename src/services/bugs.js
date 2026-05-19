@@ -101,3 +101,13 @@ export const UpdateStatus = async (bugID, data) => {
         throw error;
     }
 }
+export const GetBugNotifications = async () => {
+    try{
+        const res = await api.get(ROUTES.API_ROUTES.GETBUGNOTIFICATIONS)
+        
+        return res.data.notifications
+    }catch(error){
+        console.error("Error=====>>>>>", error);
+        throw error;
+    }
+}
