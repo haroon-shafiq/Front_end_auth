@@ -34,13 +34,16 @@ const ProjectDetail = () => {
   const { page, limit, nextPage, prevPage, changeLimit, checkPageLimit } = usePaginationQuery(5);
 
   useEffect(() => {
-    if (user && user?.role !== "MANAGER" && user?.role !== "DEVELOPER") {
+    if (user?.role == "QA") {
       console.log("User role is============>>>>>>>>>>>", user?.role);
       showToast.error("You dont have permission to access this page");
       router.push("/dashboard");
     }
-  }, []);
-  const fetchProjects = async () => {
+  }, [user]);
+  
+
+  useEffect(() => {
+      const fetchProjects = async () => {
     try {
       if (isManager) {
         const res = await getProject(page, limit);
@@ -63,10 +66,8 @@ const ProjectDetail = () => {
       console.error("Error fetching projects", error);
     }
   };
-  useEffect(() => {
-    if (user) {
       fetchProjects();
-    }
+    
   }, [user, open, page, limit]);
   const DeleteProject = async (projectId) => {
     const previousProjects = projects;
