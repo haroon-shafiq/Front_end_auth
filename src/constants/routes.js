@@ -32,7 +32,8 @@ export const ROUTES = {
     PROJECTIDBYDEV: (page, limit) => `/api/v2/projects/my-projects/?page=${page}&limit=${limit}`,
     UPLOAD_IMAGE: (bugID) => `/api/v4/upload/${bugID}`,
     ACCEPTINVITE: (token) => `/api/v2/projects/inviteAccept?token=${token}`,
-    GETNOTIFICATIONS: "/api/v1/notifications"
+    GETNOTIFICATIONS: "/api/v1/notifications",
+    REFRESHTOKEN: "/api/v1/auth/refresh"
   },
   SIDEBAR: [
     { href: "/dashboard", label: "Dashboard" },

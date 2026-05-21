@@ -2,7 +2,7 @@ import axios from "axios"
 import { handleApiError } from "@/utils/api/error-handler"
 import { showToast } from "@/lib/toast"
 import { env } from "@/config/env"
-import { getSession } from "next-auth/react"
+import { getSession, signOut } from "next-auth/react"
 
 export const api = axios.create({
   baseURL: env.apiUrl,
@@ -15,7 +15,13 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
+    console.error("Error=====>>>>", error)
+    if(error?.response.status == 401){
+      signOut({ callbackUrl: "/signin" })
+    }
     const formattedError = handleApiError(error)
+    console.log("Formated error=====>>>>>", formattedError)
+    
     if (error) {
 
       console.log("Error in ", formattedError.message)

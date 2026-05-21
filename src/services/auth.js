@@ -38,4 +38,12 @@ export const Getuser = async () => {
     throw error;
   }
 }
-
+// export const RefreshToken = async () => {
+//   try{
+//     const res = await api.post(ROUTES.API_ROUTES.REFRESHTOKEN)
+//     return res.data.newAccessToken;
+//   }catch(error){
+//     console.error("Error in refresh Token", error)
+//     throw error
+//   }
+// }
