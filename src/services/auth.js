@@ -1,5 +1,7 @@
 import { api } from "@/lib/axios";
 import { ROUTES } from "../constants/routes.js"
+import { env } from "@/config/env.js";
+import axios from "axios";
 
 
 export const registerUser = async (data) => {
@@ -38,12 +40,38 @@ export const Getuser = async () => {
     throw error;
   }
 }
-// export const RefreshToken = async () => {
-//   try{
-//     const res = await api.post(ROUTES.API_ROUTES.REFRESHTOKEN)
+// export const RefreshToken = async (token) => {
+//   try {
+//     const res = await api.post(
+//       ROUTES.API_ROUTES.REFRESHTOKEN,
+//       {
+//         userId: token.id,
+//       }
+//     );
+//     console.log("res in refresh token==>",res)
+
 //     return res.data.newAccessToken;
-//   }catch(error){
-//     console.error("Error in refresh Token", error)
-//     throw error
+//   } catch (error) {
+//     console.error("Error in refresh Token", error);
+//     throw error;
 //   }
-// }
+// };
+
+
+export const RefreshToken = async (token) => {
+  try {
+    const res = await axios.post(
+      `${env.apiUrl}${ROUTES.API_ROUTES.REFRESHTOKEN}`,
+      { userId: token.id }, 
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true, 
+      }
+    );
+    return res.data.newAccessToken;
+
+  } catch (error) {
+    console.error("Error in refresh Token", error);
+    throw error;
+  }
+};

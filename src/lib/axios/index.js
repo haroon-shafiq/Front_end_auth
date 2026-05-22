@@ -15,11 +15,11 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
-    console.error("Error=====>>>>", error)
-    if(error?.response.status == 401){
-      signOut({ callbackUrl: "/signin" })
-    }
+    // console.error("Error=====>>>>", error)
     const formattedError = handleApiError(error)
+    if(formattedError?.message == "Session expired"){
+        signOut({ callbackUrl: "/signin" })
+    }
     console.log("Formated error=====>>>>>", formattedError)
     
     if (error) {

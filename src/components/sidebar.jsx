@@ -13,21 +13,13 @@ import { sidebarConfig } from "@/constants/sidebarConfig.js";
 import { signOut } from "next-auth/react";
 
 
+
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const { user,loading } = useContext(AuthContext);
 
-
-  console.log("User", user)
-
-  // console.debug('loading:', user,loading);
-
-
-  // useEffect(() => {
-  //   console.log('console my cde.l;sd;l][][][][][][][][][][][][][][')
-  // }, [user, loading]);
 
   if (loading) {
   return (
@@ -41,6 +33,7 @@ const Sidebar = () => {
   );
 }
   const sidebarData = sidebarConfig[user?.role] || [];
+
   console.log("Sidebar dara", sidebarData);
   const handleLogout = async () => {
   showToast.success("Log out successfully");

@@ -3,6 +3,8 @@ import Sidebar from "../sidebar";
 import Header from "../header/header";
 const DashboardLayout = ({ children }) => {
 console.log("this is dashlayout")
+
+
   return (
     <div className="flex">
       <Sidebar />

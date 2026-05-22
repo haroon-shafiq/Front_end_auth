@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "@/config/env";
-import { loginUser } from "@/services/auth";
-import { ROUTES } from "../constants/routes.js"
+import { loginUser, RefreshToken } from "@/services/auth";
+import { AUTH_ERRORS } from "@/constants/enums";
 
 const ACCESS_TOKEN_TTL_MS = 1 * 60 * 1000;
 
@@ -30,7 +30,7 @@ export const authOptions = {
           }
           return null;
         } catch (error) {
-          throw new Error(error?.response?.data?.message || "Login failed");
+          throw new Error(error?.response?.data?.message || AUTH_ERRORS.LOGIN_FAIL);
         }
       },
     }),
@@ -48,26 +48,17 @@ export const authOptions = {
         };
       }
 
+  console.log("JWT CHECK ── expiresAt:", new Date(token.expiresAt).toISOString())
+  console.log("JWT CHECK ── now:", new Date().toISOString())
+  console.log("JWT CHECK ── expired?", Date.now() >= token.expiresAt)
+  console.log("JWT CHECK ── current accessToken:", token.accessToken)
+
       if (Date.now() < token.expiresAt) {
         return token;
       }
 
       try {
-        const res = await fetch(
-          `${env.apiUrl}${ROUTES.API_ROUTES.REFRESHTOKEN}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: token.id }),
-          },
-        );
-
-        if (!res.ok) throw new Error("Refresh failed");
-
-        const data = await res.json();
-        console.log("JSON=======>>>>>>", data)
-        const newAccessToken = data.newAccessToken;
-
+        const newAccessToken = await RefreshToken(token);
         return {
           ...token,
           accessToken: newAccessToken,
@@ -75,11 +66,14 @@ export const authOptions = {
           error: undefined,
         };
       } catch {
-        return { ...token, error: "RefreshTokenExpired" };
+        return { ...token, error: AUTH_ERRORS.Refresh_Token_Expired };
       }
     },
 
     async session({ session, token }) {
+      console.log("SESSION ── error:", token.error)
+      console.log("SESSION ── accessToken:", token.accessToken)
+      console.log("Token in session", token)
       session.user.id = token.id;
       session.user.role = token.role;
       session.accessToken = token.accessToken;
@@ -87,6 +81,7 @@ export const authOptions = {
       return session;
     },
   },
+  
 
   session: { strategy: "jwt" },
   pages: { signIn: "/signin" },
